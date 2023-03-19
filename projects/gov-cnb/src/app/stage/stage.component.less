@@ -1,0 +1,24 @@
+:host {
+    width: 100%;
+    height: 100vh;
+    border: 1px solid #ccc;
+
+    ::ng-deep {
+        .path {
+            stroke-dasharray: 10000;
+            stroke-dashoffset: 10000;
+            transition: stroke-dashoffset 3s ease-in-out;
+
+            stroke: #cccccc;
+            &.selected {
+                stroke: url(#fadedGrad);
+            }
+        }
+        &.revealed {
+            .path {
+                stroke-dashoffset: 0;
+                // animation: dash 2s linear forwards;
+            }
+        }
+    }
+}

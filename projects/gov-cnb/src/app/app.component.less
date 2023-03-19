@@ -1,0 +1,40 @@
+:host {
+    width: 100%;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    position: relative;
+    overflow-y: scroll;
+    app-stages {
+        position: fixed;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .footer {
+        height: 100vh;
+        display: flex;
+        flex-flow: column;
+        justify-content: flex-end;
+    }
+
+    .slides {
+        display: flex;
+        flex-flow: column;
+        align-items: flex-start;
+        width: 100%;
+        padding: 20px;
+        z-index: 10;
+
+        .slide {
+            flex: 0 0 100vh;
+            width: 50%;
+            border: 1px solid black;
+            display: flex;
+            flex-flow: column;
+            justify-content: center;
+            align-items: flex-start;
+            color: blue;
+        }
+    }
+}
