@@ -1,5 +1,6 @@
 <div class='container' [style.top]='scrollAnimation.scrollTop + "px"'>
-    <app-stage [data]='stage' *ngFor='let stage of stages' #stage></app-stage>
+    <app-stage-intro #intro></app-stage-intro>
+    <app-stage [data]='stage' *ngFor='let stage of pathsStages' #stage></app-stage>
     <div class='point' [class.active]='point.targetActive' *ngFor='let point of points' [style.left]='point.targetX + "px"' [style.top]='point.targetY + "px"'></div>
     <div class='buffer'></div>
 </div>

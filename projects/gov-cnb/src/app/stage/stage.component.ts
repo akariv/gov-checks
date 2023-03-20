@@ -4,13 +4,14 @@ import { Country, Position, StageData } from '../types';
 import { select } from 'd3-selection';
 import { path } from 'd3-path';
 import { LayoutUtils } from './layout-utils';
+import { IStage } from './istage';
 
 @Component({
   selector: 'app-stage',
   templateUrl: './stage.component.html',
   styleUrls: ['./stage.component.less'],
 })
-export class StageComponent implements AfterViewInit, OnChanges{
+export class StageComponent implements AfterViewInit, OnChanges, IStage {
 
   @Input() data: StageData;
 
@@ -119,7 +120,7 @@ export class StageComponent implements AfterViewInit, OnChanges{
     if (!this.revealed) {
       this.revealed = true;
       this.svg.attr('class', 'revealed');
-      console.log('REVEAL', this.data.name, this.data.display);
+      console.log('REVEAL', this.data.name, this.data.display, this.data.active);
     }
   }
   

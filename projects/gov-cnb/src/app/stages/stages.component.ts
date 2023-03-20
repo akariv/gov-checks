@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, ElementRef, Input, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { IStage } from '../stage/istage';
 import { LayoutUtils } from '../stage/layout-utils';
 import { StageComponent } from '../stage/stage.component';
 import { Country, Position, StageData, Step } from '../types';
@@ -84,13 +85,15 @@ export class StagesComponent implements OnInit, AfterViewInit {
   @Input() countries: Country[];
   @Input() steps: Step[];
 
-  @ViewChildren('stage') stageComponents: QueryList<StageComponent>;
+  @ViewChild('intro') introStage: IStage;
+  @ViewChildren('stage') simpleStages: QueryList<IStage>;
 
   stages: StageData[] = [];
 
   observer: IntersectionObserver;
-  currentStage: StageComponent;
+  currentStage: IStage;
   
+  stageComponents: IStage[] = [];
 
   positions: {[key: string]: {[key: string]: Position}} = {};
   points: Point[] = [];
@@ -106,6 +109,11 @@ export class StagesComponent implements OnInit, AfterViewInit {
   constructor(private el: ElementRef) {
     this.animationHandlers.push(this.scrollAnimation);
   }
+
+  get pathsStages(): StageData[] {
+    return this.stages.filter((s) => ['introduction'].indexOf(s.name) === -1);
+  }
+
 
   processCountries(countries: Country[], step: Step, active: boolean, prevPositions: {[key: string]: Position}) {
     countries = countries.map((c) => ({...c}));
@@ -143,12 +151,12 @@ export class StagesComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     const prevPositions: any = {};
-    // this.countries.forEach((country, i) => {
-    //   prevPositions[country.name] = {
-    //     active: false,
-    //     index: i
-    //   };
-    // });
+    this.countries.forEach((country, i) => {
+      prevPositions[country.name] = {
+        layout: 'init',
+        index: i
+      };
+    });
     this.steps.forEach((step, i) => {
       console.log('step', step);
       step.idx = i;
@@ -195,6 +203,10 @@ export class StagesComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.stageComponents = [
+      this.introStage,
+      ...this.simpleStages.toArray(),
+    ];
     this.observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -215,13 +227,13 @@ export class StagesComponent implements OnInit, AfterViewInit {
   }
 
   goto(step: Step) {
-    const stepIndex = this.steps.findIndex(s => s === step);
-    const scrollTop = this.height * (stepIndex + 0.5);
+    let stepIndex = this.steps.findIndex(s => s === step);
+    const scrollTop = this.height * (stepIndex + (stepIndex > 0 ? 0.5 : 0));
     this.scrollAnimation.src = -this.scrollAnimation.scrollTop;
     this.scrollAnimation.dst = scrollTop;
     this.scrollAnimation.reset(0);
     console.log('GOTO', step, scrollTop);
-    this.currentStage = this.stageComponents.toArray()[stepIndex];
+    this.currentStage = this.stageComponents[stepIndex];
     this.movePoints(stepIndex);
     this.requestAnimation();
   }
@@ -250,6 +262,9 @@ export class StagesComponent implements OnInit, AfterViewInit {
 
   movePoints(stepIndex: number) {
     const step = this.steps[stepIndex];
+    if (!step) {
+      console.log('step not found', stepIndex, this.steps.length, this.steps);
+    }
     let wait = 100;
     this.pointAnimations.forEach((pa) => {
       pa.rand = Math.random() + pa.point.heights[step.name].height;
@@ -276,7 +291,7 @@ export class StagesComponent implements OnInit, AfterViewInit {
         pointAnimation.srcX = pointAnimation.dstX;
         pointAnimation.srcY = pointAnimation.dstY;
         pointAnimation.dstX = this.layoutUtils.x(position);
-        pointAnimation.dstY = (stepIndex_ + 1) * this.height - 10*height.height;
+        pointAnimation.dstY = (stepIndex_ + 1) * this.height - 8*height.height;
         pointAnimation.reset(wait);
         if (Math.random() > 0.5) {
           wait += 1;

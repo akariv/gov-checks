@@ -17,6 +17,7 @@ export class DataService {
       console.log('steps', steps);
       console.log('countries', countries);
       console.log('slides', slides);
+      // steps = steps.filter((s: any) => ['introduction', 'overview'].indexOf(s.name)===-1);
       const stepMap = steps.reduce((acc: any, step: any) => {
         acc[step._id] = step;
         return acc;

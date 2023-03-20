@@ -13,6 +13,7 @@ export type Step = {
 };
 
 export type Position = {
+  layout?: 'init';
   active: boolean;
   index: number;
 };

@@ -7,12 +7,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { StageComponent } from './stage/stage.component';
 import { StagesComponent } from './stages/stages.component';
+import { StageIntroComponent } from './stage-intro/stage-intro.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     StageComponent,
-    StagesComponent
+    StagesComponent,
+    StageIntroComponent,
   ],
   imports: [
     BrowserModule,
