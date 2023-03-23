@@ -1,6 +1,9 @@
+import { SafeHtml } from "@angular/platform-browser";
+
 export type Slide = {
   id: string;
   text: string;
+  textHtml?: SafeHtml;
   step: Step
   highlight_country: Country[];
 };
@@ -9,13 +12,16 @@ export type Step = {
   name: string;
   display: string;
   color: string;
-  idx?: number;
 };
 
 export type Position = {
-  layout?: 'init';
+  layout?: 'init' | 'intro';
   active: boolean;
   index: number;
+  height?: number;
+  width?: number;
+  numActive?: number;
+  selectedNum?: number;
 };
 
 export type Country = {
@@ -36,3 +42,37 @@ export type StageData = {
   inactive: Country[];
 };
 
+
+export class Point {
+  country: Country;
+  step: Step;
+  heights: {[key: string]: {
+      position: Position,
+      height: number
+    }
+  };
+  targetX?: number;
+  targetY?: number;
+  targetActive?: boolean;
+  el?: HTMLElement;
+
+  updatePos(x: number, y: number, debug?: boolean) {
+    if (this.el && this.targetX !== x && this.targetY !== y) {
+      if (debug) {
+        console.log('ddd updatePos', x, y);
+      }
+      this.el.style.left = x + 'px';
+      this.el.style.top = y + 'px';
+      this.targetX = x;
+      this.targetY = y;      
+    }
+  }
+
+  updateActive(active: boolean) {
+    if (this.el && this.targetActive !== active) {
+      this.el.className = active ? 'point active' : 'point';
+      this.el.style.backgroundColor = active ? this.step.color : '#cccccc';
+      this.targetActive = active;
+    }
+  }
+};

@@ -1,84 +1,16 @@
-import { AfterViewInit, Component, ElementRef, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, NgZone, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { delay, tap, timer } from 'rxjs';
 import { IStage } from '../stage/istage';
 import { LayoutUtils } from '../stage/layout-utils';
-import { StageComponent } from '../stage/stage.component';
-import { Country, Position, StageData, Step } from '../types';
-
-
-type Point = {
-  country: Country;
-  step: Step;
-  heights: {[key: string]: {
-      position: Position,
-      height: number
-    }
-  };
-  targetX?: number;
-  targetY?: number;
-  targetActive?: boolean;
-};
-
-class AnimationHandler {
-  wait = 0;
-  current = 100;
-
-  interpolate(t: number): void {}
-  animate(): number {
-    if (this.wait > 0) {
-      this.wait--;
-      return 1;
-    }
-    if (this.current <= 100) {
-      this.interpolate(this.current / 100);
-      this.current += 1;
-      return 1;
-    }
-    return 0;
-  }
-  reset(wait: number) {
-    this.wait = wait;
-    this.current = 0;
-  }
-}
-
-class PointAnimationHandler extends AnimationHandler {
-  srcX = 0;
-  srcY = 0;
-  dstX = 0;
-  dstY = 0;
-  rand: number;
-  constructor(public point: Point) {
-    super();
-  }
-
-  override interpolate(t: number) {
-    t = 4 * (t - 0.5)**3 + 0.5;
-    const _t = 1 - t;
-    this.point.targetX = this.srcX * _t * _t * (1 + 2 * t) + this.dstX * t * t * (3 - 2 * t);
-    const yCoeff = 1.5 * t * _t;
-    this.point.targetY = this.srcY * (_t * _t * _t + yCoeff) + this.dstY * (t * t * t + yCoeff);
-  }
-}
-
-class ScrollAnimationHandler extends AnimationHandler {
-  src = 0;
-  dst = 0;
-  scrollTop = 0;
-  constructor() {
-    super();
-  }
-
-  override interpolate(t: number) {
-    this.scrollTop = -(this.src * (1 - t) + this.dst * t);
-  }
-}
+import { Country, Point, Position, StageData, Step } from '../types';
+import { AnimationHandler, Animator, PointAnimationHandler, POINT_ANIMATION_DURATION, REVEAL_ANIMATION_DURATION, ScrollAnimationHandler, SCROLL_ANIMATION_DURATION } from './animations';
 
 @Component({
   selector: 'app-stages',
   templateUrl: './stages.component.html',
   styleUrls: ['./stages.component.less']
 })
-export class StagesComponent implements OnInit, AfterViewInit {
+export class StagesComponent implements AfterViewInit {
 
   position: Position = {active: false, index: 0};
 
@@ -87,8 +19,10 @@ export class StagesComponent implements OnInit, AfterViewInit {
 
   @ViewChild('intro') introStage: IStage;
   @ViewChildren('stage') simpleStages: QueryList<IStage>;
+  @ViewChildren('points') pointElements: QueryList<ElementRef>;
 
   stages: StageData[] = [];
+  introStageData: StageData;
 
   observer: IntersectionObserver;
   currentStage: IStage;
@@ -97,23 +31,24 @@ export class StagesComponent implements OnInit, AfterViewInit {
 
   positions: {[key: string]: {[key: string]: Position}} = {};
   points: Point[] = [];
+  
   height = 0;
+  width = 0;
 
-  animationHandlers: AnimationHandler[] = [];
-  animateRequested = false;
+  animator: Animator;
   pointAnimations: PointAnimationHandler[] = [];
   scrollAnimation = new ScrollAnimationHandler();
 
   layoutUtils: LayoutUtils;
 
-  constructor(private el: ElementRef) {
-    this.animationHandlers.push(this.scrollAnimation);
-  }
+  ready = false;
+  firstTime = true;
+  lastMovePoints = -1;
 
-  get pathsStages(): StageData[] {
-    return this.stages.filter((s) => ['introduction'].indexOf(s.name) === -1);
+  constructor(private el: ElementRef, private ngZone: NgZone) {
+    this.animator = new Animator(ngZone);
+    this.animator.animationHandlers.push(this.scrollAnimation);
   }
-
 
   processCountries(countries: Country[], step: Step, active: boolean, prevPositions: {[key: string]: Position}) {
     countries = countries.map((c) => ({...c}));
@@ -149,7 +84,7 @@ export class StagesComponent implements OnInit, AfterViewInit {
     return countries;
   }
 
-  ngOnInit(): void {
+  processData(): void {
     const prevPositions: any = {};
     this.countries.forEach((country, i) => {
       prevPositions[country.name] = {
@@ -157,9 +92,8 @@ export class StagesComponent implements OnInit, AfterViewInit {
         index: i
       };
     });
-    this.steps.forEach((step, i) => {
-      console.log('step', step);
-      step.idx = i;
+    this.stages = this.steps.filter((s) => ['introduction'].indexOf(s.name) === -1).map((step) => {
+      // console.log('step', step);
       const stageData: StageData = {
         name: step.name,
         display: step.display,
@@ -167,18 +101,45 @@ export class StagesComponent implements OnInit, AfterViewInit {
         active: this.processCountries(this.countries.filter(country => country.steps.includes(step)), step, true, prevPositions),
         inactive: this.processCountries(this.countries.filter(country => !country.steps.includes(step)), step, false, prevPositions),
       };
-      this.stages.push(stageData);
+      [...stageData.active, ...stageData.inactive].forEach((c) => {
+        if (c.position) {
+          c.position.numActive = stageData.active.length;
+        }
+      });
+      return stageData;
     });
+    const introStep = this.steps.find((s) => s.name === 'introduction');
+    if (introStep) {
+      this.introStageData = {
+        name: introStep.name,
+        display: introStep.display,
+        color: introStep.color,
+        active: this.countries.map((c: Country, i) => {
+          return {
+            ...c,
+            position: {
+              layout: 'init',
+              index: i
+            },
+            prevPosition: {
+              layout: 'intro',
+              index: i
+            }
+          };
+        }) as Country[],
+        inactive: [],
+      };  
+    }
+
     console.log('stages', this.stages);
     this.points = [];
     this.countries.forEach((country) => {
       country.steps.forEach((step) => {
         const heights: any = {};
-        const point: Point = {
-          country: country,
-          step: step,
-          heights
-        };
+        const point = new Point();
+        point.country = country;
+        point.step = step;
+        point.heights = heights;
         let height = -1;
         this.steps.forEach((s) => {
           if (height === -1) {
@@ -196,64 +157,82 @@ export class StagesComponent implements OnInit, AfterViewInit {
         this.points.push(point);
         const pah = new PointAnimationHandler(point);
         this.pointAnimations.push(pah);
-        this.animationHandlers.push(pah);
+        this.animator.animationHandlers.push(pah);
       });
     });
-    console.log('points', this.points);
+    // this.pointAnimations[10].debug = true;
+    // console.log('ddd point', this.pointAnimations[10]);
+    timer(1).subscribe(() => {
+      this.pointElements.forEach((el, idx) => {
+        this.points[idx].el = el.nativeElement;
+      });
+    });
+    // console.log('points', this.points);
   }
 
   ngAfterViewInit(): void {
-    this.stageComponents = [
-      this.introStage,
-      ...this.simpleStages.toArray(),
-    ];
+    this.width = this.el.nativeElement.offsetWidth;
+    if (this.width > 800) {
+      this.width = 800;
+    }
+    this.height = this.el.nativeElement.offsetHeight;
+    this.layoutUtils = new LayoutUtils(this.width, this.height);
+
     this.observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const stage = this.stageComponents.find(c => c.el.nativeElement === entry.target);
-          if (stage) {
+          if (stage === this.stageComponents[0] || stage === this.stageComponents[1]) {
+            // do nothing
+          } else if (stage) {
             stage.reveal();
           }
         }
       });
-    }, {threshold: 0.75, root: this.el.nativeElement});
-    this.stageComponents.forEach(c => {
-      this.observer.observe(c.el.nativeElement);
-    });
-    this.height = this.el.nativeElement.offsetHeight;
-    console.log('height', this.height);
-    this.layoutUtils = new LayoutUtils(this.el.nativeElement.offsetWidth);
-    this.movePoints(0);
+    }, {threshold: 0.55, root: this.el.nativeElement});
+    timer(0).pipe(
+      tap(() => {
+        this.processData();
+      }),
+      delay(1),
+      tap(() => {
+        this.stageComponents = [
+          this.introStage,
+          ...this.simpleStages.toArray(),
+        ];    
+        this.stageComponents.forEach(c => {
+          this.observer.observe(c.el.nativeElement);
+        });
+        this.ready = true;
+        this.movePoints(0);
+        this.animator.requestAnimation();
+      })
+    ).subscribe();
   }
 
   goto(step: Step) {
     let stepIndex = this.steps.findIndex(s => s === step);
-    const scrollTop = this.height * (stepIndex + (stepIndex > 0 ? 0.5 : 0));
-    this.scrollAnimation.src = -this.scrollAnimation.scrollTop;
-    this.scrollAnimation.dst = scrollTop;
-    this.scrollAnimation.reset(0);
-    console.log('GOTO', step, scrollTop);
+    let obs = timer(0);
+    if (stepIndex === 1 && this.firstTime) {
+      this.firstTime = false;
+      this.introStage.reveal();
+      timer(REVEAL_ANIMATION_DURATION).subscribe(() => {
+        this.stageComponents[1].reveal();
+      });
+      obs = timer(REVEAL_ANIMATION_DURATION * 0.5);
+    }
     this.currentStage = this.stageComponents[stepIndex];
-    this.movePoints(stepIndex);
-    this.requestAnimation();
-  }
-
-  animate() {
-    let ongoing = 0;
-    this.animationHandlers.forEach(h => {
-      ongoing += h.animate();
-    });
-    this.animateRequested = false;
-    if (ongoing > 0) {
-      this.requestAnimation();
-    }
-  }
-
-  requestAnimation() {
-    if (!this.animateRequested) {
-      this.animateRequested = true;
-      requestAnimationFrame(() => this.animate());
-    }
+    obs.subscribe(() => {
+      if (this.currentStage === this.stageComponents[stepIndex]) {
+        const scrollTop = this.height * (stepIndex + (stepIndex > 0 ? 0.5 : 0));
+        this.scrollAnimation.src = -this.scrollAnimation.scrollTop;
+        this.scrollAnimation.dst = scrollTop;
+        this.scrollAnimation.reset(0);
+        console.log('GOTO', step, scrollTop);
+        this.movePoints(stepIndex);
+        this.animator.requestAnimation();  
+      }
+    });  
   }
 
   highlight(countries: Country[]) {
@@ -261,11 +240,15 @@ export class StagesComponent implements OnInit, AfterViewInit {
   }
 
   movePoints(stepIndex: number) {
+    if (stepIndex === this.lastMovePoints) {
+      return;
+    }
+    this.lastMovePoints = stepIndex;
     const step = this.steps[stepIndex];
     if (!step) {
       console.log('step not found', stepIndex, this.steps.length, this.steps);
     }
-    let wait = 100;
+    let wait = SCROLL_ANIMATION_DURATION + 500;
     this.pointAnimations.forEach((pa) => {
       pa.rand = Math.random() + pa.point.heights[step.name].height;
     });
@@ -287,16 +270,30 @@ export class StagesComponent implements OnInit, AfterViewInit {
       } else {
         position = height.position;
       }
+      const step_ = this.steps[stepIndex_];
       if (!!position) {
-        pointAnimation.srcX = pointAnimation.dstX;
-        pointAnimation.srcY = pointAnimation.dstY;
-        pointAnimation.dstX = this.layoutUtils.x(position);
-        pointAnimation.dstY = (stepIndex_ + 1) * this.height - 8*height.height;
-        pointAnimation.reset(wait);
-        if (Math.random() > 0.5) {
-          wait += 1;
+        const dstX = this.layoutUtils.x(position);
+        const dstY = (stepIndex_ + 1) * this.height - 8*height.height;
+        const active = position.active && step_.name === point.step.name;
+        if (pointAnimation.debug) {
+          console.log('ddd move', stepIndex, active, ':', dstX, dstY, ':', pointAnimation.dstX, pointAnimation.dstY);
         }
-        point.targetActive = position.active && step.name === point.step.name;
+        if ((pointAnimation.dstY < dstY) && !active) {
+          pointAnimation.srcX = pointAnimation.dstX;
+          pointAnimation.srcY = pointAnimation.dstY || 100000;
+          pointAnimation.dstX = dstX;
+          pointAnimation.dstY = dstY;
+          pointAnimation.dstActive = active;
+          pointAnimation.reset(wait);
+          if (Math.random() > 0.5 && stepIndex > 1) {
+            wait += 25;
+          }    
+        } else {
+          pointAnimation.dstX = dstX;
+          pointAnimation.dstY = dstY;
+          point.updatePos(dstX, dstY);
+          point.updateActive(active);
+        }
       }
       // console.log('MOVE POINTS', stepIndex, stepIndex_, height.height, point.step.name, point.country.name, point.targetX, point.targetY);
     });

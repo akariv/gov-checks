@@ -4,6 +4,9 @@ import { DataService } from './data.service';
 import { StagesComponent } from './stages/stages.component';
 import { Step, Country, Slide } from './types';
 
+import { marked } from 'marked';
+import { MarkdownService } from './markdown.service';
+
 
 @Component({
   selector: 'app-root',
@@ -11,39 +14,27 @@ import { Step, Country, Slide } from './types';
   styleUrls: ['./app.component.less']
 })
 export class AppComponent implements AfterViewInit {
-
-  // step1: Step = {name: 'step1', display: 'Step One', color: 'red'};
-  // step2: Step = {name: 'step2', display: 'Step Two', color: 'blue'};
-  // step3: Step = {name: 'step3', display: 'Step Three', color: 'green'};
-  // step4: Step = {name: 'step4', display: 'Step Four', color: 'yellow'};
-  // step5: Step = {name: 'step5', display: 'Step Five', color: 'purple'};
-
-  // steps: Step[] = [
-  //   this.step1, this.step2, this.step3, this.step4, this.step5
-  // ];
-  // countries: Country[] = [
-  //   {name: 'USA', display: 'United States', steps: [this.step1, this.step2, ]},
-  //   {name: 'CAN', display: 'Canada', steps: [this.step1, this.step2, ]},
-  //   {name: 'MEX', display: 'Mexico', steps: [this.step1, this.step2, this.step3, ]},
-  //   {name: 'BRA', display: 'Brazil', steps: [this.step1, this.step2, this.step3, ]},
-  //   {name: 'ARG', display: 'Argentina', steps: [this.step2, this.step3, this.step4, ]},
-  //   {name: 'CHL', display: 'Chile', steps: [this.step1, this.step3, this.step4, this.step5]},    
-  //   {name: 'ISR', display: 'Israel', steps: []},
-  //   {name: 'EGY', display: 'Egypt', steps: [this.step1, ]},
-  //   {name: 'SAU', display: 'Saudi Arabia', steps: [this.step1, this.step3, ]},
-  //   {name: 'QAT', display: 'Qatar', steps: [this.step1, this.step2, this.step3, ]},
-  //   {name: 'ARE', display: 'United Arab Emirates', steps: [this.step1, this.step2, this.step4, ]},
-  //   {name: 'OMN', display: 'Oman', steps: [this.step1, this.step2, this.step3, this.step4, this.step5]},
-  // ];
   countries: Country[];
   steps: Step[];
   slides: Slide[];
   
   observer: IntersectionObserver;
 
+  marked = marked;
+
   @ViewChild('stages') stages: StagesComponent;
 
-  constructor(private data: DataService, private el: ElementRef) {}
+  constructor(private data: DataService, private el: ElementRef, public md: MarkdownService) {
+    // Marked.js options
+    const renderer = new marked.Renderer();
+    const linkRenderer = renderer.link;
+    renderer.link = (href, title, text) => {
+      const localLink = (href || '').startsWith(`${location.protocol}//${location.hostname}`);
+      const html = linkRenderer.call(renderer, href, title, text);
+      return localLink ? html : html.replace(/^<a /, `<a target="_blank" rel="noreferrer noopener nofollow" `);
+    };
+    marked.use({renderer});
+  }
 
   ngAfterViewInit() {
     this.data.data.pipe(
@@ -51,6 +42,9 @@ export class AppComponent implements AfterViewInit {
         this.countries = data.countries;
         this.steps = data.steps;
         this.slides = data.slides;
+        this.slides.forEach((slide, i) => {
+          slide.textHtml = this.md._(slide.text);
+        });
       }),
       delay(1),
       // switchMap(() => 
@@ -75,18 +69,20 @@ export class AppComponent implements AfterViewInit {
 
   setupObserver() {
     this.observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
+      for (let entry of entries) {
         if (entry.isIntersecting) {
           const slideIdx = entry.target.getAttribute('data-slide-idx') || '0';
           const slide: Slide = this.slides[parseInt(slideIdx, 10)];
           const step: Step | undefined = slide.step;
           if (step) {
+            console.log('goto', step.name);
             this.stages.goto(step);
+            this.stages.highlight(slide.highlight_country);
           }
-          this.stages.highlight(slide.highlight_country);
+          break;
         }
-      });
-    }, {threshold: 0.75});
+      }
+    }, {threshold: 0.25});
     this.el.nativeElement.querySelectorAll('.slide').forEach((el: HTMLElement) => {
       this.observer.observe(el);
     });

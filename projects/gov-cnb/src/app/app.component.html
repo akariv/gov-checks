@@ -1,13 +1,8 @@
-<!-- <div class='controls'>
-  <select [(ngModel)]='currentStep'>
-    <option *ngFor='let step of steps' [value]='step.idx'>{{step.display}}</option>
-  </select>
-</div> -->
 <ng-container *ngIf='countries && steps'>
   <app-stages [countries]='countries' [steps]='steps' #stages></app-stages>
 </ng-container>
 <div class='slides' *ngIf='slides'>
-  <div class='slide' *ngFor='let slide of slides; let i = index' [attr.data-slide-idx]='i'>
-    {{slide.text}}
+  <div class='slide' *ngFor='let slide of slides; let i = index' [attr.data-slide-idx]='i' [innerHtml]='slide.textHtml'>
   </div>
+  <img class='scroll-on' src='assets/img/scrolldown.svg'/>
 </div>

@@ -1,5 +1,16 @@
 :host {
     width: 100%;
     height: 100vh;
-    border: 1px solid #ccc;
+
+    ::ng-deep {
+        .path {
+            stroke: #cccccc;
+        }
+        &.revealed {
+            .path {
+                stroke-dashoffset: 0 !important;
+                // animation: dash 2s linear forwards;
+            }
+        }
+    }
 }

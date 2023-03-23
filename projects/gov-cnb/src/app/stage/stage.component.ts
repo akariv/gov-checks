@@ -1,10 +1,11 @@
 import { AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { delay, filter, ReplaySubject, switchMap, tap } from 'rxjs';
+import { delay, filter, ReplaySubject, switchMap, tap, timer } from 'rxjs';
 import { Country, Position, StageData } from '../types';
 import { select } from 'd3-selection';
 import { path } from 'd3-path';
 import { LayoutUtils } from './layout-utils';
 import { IStage } from './istage';
+import { REVEAL_ANIMATION_DURATION } from '../stages/animations';
 
 @Component({
   selector: 'app-stage',
@@ -50,7 +51,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
   ngAfterViewInit() {
     this.height = this.el.nativeElement.offsetHeight;
     this.width = this.el.nativeElement.offsetWidth;
-    this.layoutUtils = new LayoutUtils(this.width);
+    this.layoutUtils = new LayoutUtils(this.width, this.height);
     this.ready.next();
   }
 
@@ -66,7 +67,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
         .attr('height', this.height);
       const defs = this.svg.append('defs');
       const fadeGrad = defs.append('linearGradient')
-        .attr('id', 'fadeGrad')
+        .attr('id', 'fadeGrad' + data.name)
         .attr('gradientTransform', 'rotate(90)')
         .attr('gradientUnits', 'userSpaceOnUse');
       // fadeGrad.append('stop')
@@ -80,7 +81,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
         .attr('stop-color', '#CCCCCC');
       fadeGrad.append('stop')
         .attr('offset', '100%')
-        .attr('stop-color', '#FF7F0E');
+        .attr('stop-color', this.data.color);
 
       this.svg = this.svg
         .append('g');
@@ -92,23 +93,33 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       .data(data.inactive, (d: any) => (d as Country).name);
     active.enter()
       .append('path')
-      .attr('class', 'path active')
+      .attr('class', 'path active');
     active.exit().remove();
     active
-      .style('stroke', (d: any) => d.selected ? `url(#fadeGrad)` : '#cccccc')
+      .style('stroke', (d: any) => d.selected ? `url(#fadeGrad${data.name})` : '#cccccc')
       .style('stroke-width', 1)
       .style('fill', 'none')
-      .attr('d', (d: any) => this.pathGenerator(d));
+      .attr('d', (d: any) => this.pathGenerator(d))
+      .style('stroke-dasharray', (d: any, i: number, nodes: Element[]) => (nodes[i] as SVGPathElement).getTotalLength())
+      .style('stroke-dashoffset', (d: any, i: number, nodes: Element[]) => (nodes[i] as SVGPathElement).getTotalLength());
+    timer(1).subscribe(() => {
+      active.style('transition', `stroke-dashoffset ${REVEAL_ANIMATION_DURATION}ms linear`);
+    });
     inactive.enter()
       .append('path')
       .attr('class', 'path inactive')
     inactive.exit().remove();
     inactive
-      .style('stroke', (d: any) => d.selected ? `url(#fadeGrad)` : '#cccccc')
+      .style('stroke', (d: any) => d.selected ? `url(#fadeGrad${data.name})` : '#cccccc')
       .style('stroke-width', 1)
       .style('fill', 'none')
-      .attr('d', (d: any) => this.pathGenerator(d));
-}
+      .attr('d', (d: any) => this.pathGenerator(d))
+      .style('stroke-dasharray', (d: any, i: number, nodes: Element[]) => (nodes[i] as SVGPathElement).getTotalLength())
+      .style('stroke-dashoffset', (d: any, i: number, nodes: Element[]) => (nodes[i] as SVGPathElement).getTotalLength())
+    timer(1).subscribe(() => {
+      inactive.style('transition', `stroke-dashoffset ${REVEAL_ANIMATION_DURATION}ms linear`);
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data']) {
@@ -125,11 +136,24 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
   }
   
   selectCountries(countries: Country[]) {
-    [...this.data.active, ...this.data.inactive].forEach((c) => {
-      c.selected = countries.find((cc) => cc.name === c.name) ? true : false;
-      if (c.selected) {
-        console.log('CCCCC', c.selected);
-      }
+    [this.data.active, this.data.inactive].forEach(lists => {
+      let selectedNum = 0;
+      let lastSelected = false;
+      lists.forEach((c) => {
+        c.selected = countries.find((cc) => cc.name === c.name) ? true : false;
+        if (c.position) {
+          if (c.selected) {
+            if (c.position?.index > 0) {
+              selectedNum++;
+            }
+            lastSelected = true;
+          } else if (lastSelected) {
+            lastSelected = false;
+            selectedNum++;
+          }
+          c.position.selectedNum = selectedNum;
+        }
+      });
     });
     this.redraw(this.data);
   }
