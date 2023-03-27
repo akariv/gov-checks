@@ -32,6 +32,22 @@
         width: 100%;
     }
 
+    img.title {
+        position: fixed;
+        display: none;
+        left: 50%;
+        transform: translateX(-50%)scale(1);
+        transform-origin: 0 0;
+        transition-property: transform top left;
+        transition-duration: 1s;
+        transition-timing-function: ease-in-out;
+
+        &.scrolled {
+            top: 16px !important;
+            left: 16px;
+            transform: translateX(0)scale(0.5);
+        }
+    }
     .slides {
         display: flex;
         flex-flow: column;
@@ -139,13 +155,15 @@
     }
 
     .footer {
-        margin-top: 80px;
+        padding-top: 80px;
         display: flex;
         flex-flow: row wrap;
         justify-content: center;
         align-items: flex-start;
         gap: 40px;
         max-width: 760px;
+        background-color: @bg;
+        z-index: 2;
 
         .footer-section {
             flex: 0 1 360px;

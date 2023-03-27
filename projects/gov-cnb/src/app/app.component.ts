@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { delay, filter, interval, map, switchMap, take, tap, throttleTime, timer } from 'rxjs';
+import { delay, filter, first, fromEvent, interval, map, switchMap, take, tap, throttleTime, timer } from 'rxjs';
 import { DataService } from './data.service';
 import { StagesComponent } from './stages/stages.component';
 import { Step, Country, Slide, Bill } from './types';
@@ -17,6 +17,7 @@ export class AppComponent implements AfterViewInit {
 
   @ViewChild('stages') stages: StagesComponent;
   @ViewChild('slidesContainer') slidesContainer: ElementRef<HTMLElement>;
+  @ViewChild('title') titleImg: ElementRef<HTMLElement>;
   @ViewChildren('steptext') stepTexts: QueryList<ElementRef<HTMLElement>>;
 
   marked = marked;
@@ -74,6 +75,16 @@ export class AppComponent implements AfterViewInit {
       // )
     ).subscribe(() => {
       this.setupObserver();
+      const content = this.slidesContainer.nativeElement.querySelector('.slide:first-child > *:first-child') as HTMLElement;
+      const titleEl = this.titleImg.nativeElement as HTMLElement;
+      titleEl.style.top = (content.getBoundingClientRect().top - 120) + 'px';
+      titleEl.style.display = 'block';
+      fromEvent(this.el.nativeElement, 'scroll').pipe(
+        first()
+      ).subscribe(() => {
+        titleEl.classList.add('scrolled');
+      });
+      // console.log('LLLL', content);
     });
   }  
 
