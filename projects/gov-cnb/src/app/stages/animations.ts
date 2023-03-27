@@ -49,10 +49,10 @@ export class AnimationHandler {
       this.interpolate(t);
       return 1 - t;
     } else {
+      this.interpolate(1);
       if (this.debug) {
         console.log('ddd stopping', diff);
       }  
-      this.interpolate(1);
       this.stopped = true;
     }
     return 0;
@@ -82,7 +82,7 @@ export class PointAnimationHandler extends AnimationHandler {
 
   override interpolate(t: number) {
     if (this.debug) {
-      // console.log('ddd interpolate', t);
+      console.log('ddd interpolate', t);
     }
     let targetX = this.dstX;
     let targetY = this.dstY;

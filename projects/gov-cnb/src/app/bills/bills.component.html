@@ -1,0 +1,11 @@
+<div class='bills'>
+    <div class='bill' *ngFor='let bill of bills; let i = index' [class.selected]='bill === selectedBill'>
+        <div class='bill-box' (click)='selected(bill)'>
+            <div class='bill-content'>
+                <div class='title'>{{bill.title}}</div>
+                <div class='subtitle'>{{bill.subtitle}}</div>    
+            </div>
+        </div>
+        <div class='continue'></div>
+    </div>
+</div>

@@ -42,6 +42,10 @@ export type StageData = {
   inactive: Country[];
 };
 
+export type Bill = {
+  title: string;
+  subtitle: string;
+};
 
 export class Point {
   country: Country;
@@ -57,10 +61,10 @@ export class Point {
   el?: HTMLElement;
 
   updatePos(x: number, y: number, debug?: boolean) {
-    if (this.el && this.targetX !== x && this.targetY !== y) {
-      if (debug) {
-        console.log('ddd updatePos', x, y);
-      }
+    if (debug) {
+      console.log('ddd updatePos', x, y, !!this.el, this.targetY !== y);
+    }
+    if (this.el && this.targetY !== y) {
       this.el.style.left = x + 'px';
       this.el.style.top = y + 'px';
       this.targetX = x;
@@ -74,5 +78,9 @@ export class Point {
       this.el.style.backgroundColor = active ? this.step.color : '#cccccc';
       this.targetActive = active;
     }
+  }
+
+  get id() {
+    return this.country.name + '-' + this.heights['outro'].height;
   }
 };

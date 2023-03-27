@@ -13,10 +13,18 @@ export class DataService {
   public data = new ReplaySubject<any>(1);
 
   constructor(private http: HttpClient) {
-    forkJoin([this.fetch('Countries'), this.fetch('Steps'), this.fetch('Slides')]).subscribe(([countries, steps, slides]) => {
+    forkJoin([
+      this.fetch('Countries'),
+      this.fetch('Steps'),
+      this.fetch('Slides'),
+      this.fetch('Bills'),
+      this.fetch('Content'),
+    ]).subscribe(([countries, steps, slides, bills, content]) => {
       console.log('steps', steps);
       console.log('countries', countries);
       console.log('slides', slides);
+      console.log('bills', bills);
+      console.log('content', content);
       // steps = steps.filter((s: any) => ['introduction', 'overview'].indexOf(s.name)===-1);
       const stepMap = steps.reduce((acc: any, step: any) => {
         acc[step._id] = step;
@@ -33,13 +41,19 @@ export class DataService {
         slide.step = stepMap[slide.step];
         slide.highlight_country = (slide.highlight_country || []).map((c: string) => countryMap[c]);
       });
-      this.data.next({countries, steps, slides});
+      content = {
+        credits: content.find((c: any) => c.name === 'credits').text,
+        methodology: content.find((c: any) => c.name === 'methodology').text,
+        lawsSlideIndex: parseInt(content.find((c: any) => c.name === 'laws-slide-index').text, 10),
+      };
+      this.data.next({countries, steps, slides, bills, content});
       this.data.complete();
     });
   }
 
   fetch(table: string) {
     const url = `${this.URL}${table}`;
+    // const url = `/assets/cache/${table.toLowerCase()}.json`;
     const params = {
       maxRecords: 1000,
       view: 'WEBSITE'

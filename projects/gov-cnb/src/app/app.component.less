@@ -2,22 +2,34 @@
 
 :host {
     width: 100%;
+    height: 100%;
+    max-height: 100vh;
     display: flex;
     flex-flow: column;
     align-items: center;
     position: relative;
-    overflow-y: scroll;
+    .overflow-scroll;
+    background-color: @bg;
+    
     app-stages {
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        height: 100vh;
+        margin-top: -100vh;
+        flex: 0 0 auto;
+        // left: 50%;
+        // transform: translateX(-50%);
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    app-bills {
         position: fixed;
         top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-    .footer {
+        left: 0;
         height: 100vh;
-        display: flex;
-        flex-flow: column;
-        justify-content: flex-end;
+        width: 100%;
     }
 
     .slides {
@@ -25,6 +37,7 @@
         flex-flow: column;
         align-items: center;
         width: 100%;
+        height: 100%;
         padding: 20px;
         z-index: 10;
         pointer-events: none;
@@ -43,12 +56,22 @@
             font-size: 28px;
             line-height: 32px;
             color: @blue;
-            pointer-events: none;
 
             ::ng-deep {
                 p {
+                    pointer-events: auto;
                     margin: 0;
                     width: 100%;    
+                }
+            }
+
+            &.laws-slide {
+                justify-content: flex-start;
+            }
+            &.mini {
+                flex: 0 0 25vh;
+                .share {
+                    margin-top: 40px;
                 }
             }
         }
@@ -58,5 +81,100 @@
         position: absolute;
         top: calc(100vh ~'-' 24px);
         transform: translateY(-100%);
+    }
+
+    .steps-guide {
+        position: sticky;
+        width: 100%;
+        height: 36px;
+        flex: 0 0 auto;
+        background-color: @bg;
+        border-width: 1px 0px;
+        border-style: solid;
+        border-color: #BDBDBD;
+        
+        border: 1px solid @blue;
+        bottom: -1px;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        // justify-content: center;
+        .overflow-scroll;
+        overscroll-behavior: contain;
+        z-index: 10;
+
+        .step {
+            .step-text {
+                white-space: nowrap;
+                .font;
+                font-weight: 400;
+                font-size: 20px;
+                line-height: 19px;
+                color: @blue;
+    
+    
+                &.active {
+                    font-weight: 700;
+                }
+    
+                &.disabled {
+                    color: #BDBDBD;
+                }
+            }
+    
+            border-left: 1px solid #BDBDBD;
+            padding: 0 10px;
+            &:last-child {
+                border: none;
+            }
+
+        }
+
+        &.visible {
+            opacity: 1;
+        }
+    }
+
+    .footer {
+        margin-top: 80px;
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 40px;
+        max-width: 760px;
+
+        .footer-section {
+            flex: 0 1 360px;
+            .font;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 22px;
+            color: @blue;
+    
+            h3 {
+                .font;
+                font-weight: 700;
+                font-size: 24px;
+                line-height: 32px;
+                margin: 0;
+                margin-bottom: 8px;
+            }
+            
+            ::ng-deep {
+                p {
+                    margin: 0;
+                    margin-bottom: 8px;
+                    text-align: justify;
+                }
+            }
+        }
+        
+        .berl {
+            width: 150px;
+        }
     }
 }

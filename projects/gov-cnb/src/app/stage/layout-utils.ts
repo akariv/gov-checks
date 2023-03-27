@@ -28,7 +28,7 @@ export class LayoutUtils {
         ret = p.width;
       } else {
         const skip = (this.width - 3 * this.PADDING) / this.SLOTS;
-        ret = (p.active ? 0 : this.PADDING + skip * (p.numActive || 0)) + this.PADDING + p.index * skip;// + (p.selectedNum || 0)* 3 * skip;
+        ret = (!p.active ? 0 : this.PADDING + skip * (this.SLOTS - (p.numActive || 0))) + this.PADDING + p.index * skip;// + (p.selectedNum || 0)* 3 * skip;
       }
     }
     return ret;

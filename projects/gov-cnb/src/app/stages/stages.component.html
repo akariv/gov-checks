@@ -2,7 +2,7 @@
     <app-stage-intro [data]='introStageData' #intro></app-stage-intro>
     <app-stage [data]='stage' *ngFor='let stage of stages' #stage></app-stage>
     <div class='points'>
-        <div class='point' *ngFor='let point of points' #points
+        <div class='point' *ngFor='let point of points' #points [attr.data-id]='point.id'
         ></div>    
     </div>
     <div class='buffer'></div>

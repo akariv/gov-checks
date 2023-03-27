@@ -89,8 +89,6 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
     const group = this.svg;
     const active = group.selectAll('.path.active')
       .data(data.active, (d: any) => (d as Country).name);
-    const inactive = group.selectAll('.path.inactive')
-      .data(data.inactive, (d: any) => (d as Country).name);
     active.enter()
       .append('path')
       .attr('class', 'path active');
@@ -101,10 +99,13 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       .style('fill', 'none')
       .attr('d', (d: any) => this.pathGenerator(d))
       .style('stroke-dasharray', (d: any, i: number, nodes: Element[]) => (nodes[i] as SVGPathElement).getTotalLength())
-      .style('stroke-dashoffset', (d: any, i: number, nodes: Element[]) => (nodes[i] as SVGPathElement).getTotalLength());
+      .style('stroke-dashoffset', (d: any, i: number, nodes: Element[]) => (nodes[i] as SVGPathElement).getTotalLength())
     timer(1).subscribe(() => {
-      active.style('transition', `stroke-dashoffset ${REVEAL_ANIMATION_DURATION}ms linear`);
+      active.style('transition', (d: Country) => `stroke-dashoffset ${REVEAL_ANIMATION_DURATION}ms linear`);
     });
+
+    const inactive = group.selectAll('.path.inactive')
+    .data(data.inactive, (d: any) => (d as Country).name);
     inactive.enter()
       .append('path')
       .attr('class', 'path inactive')
@@ -117,7 +118,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       .style('stroke-dasharray', (d: any, i: number, nodes: Element[]) => (nodes[i] as SVGPathElement).getTotalLength())
       .style('stroke-dashoffset', (d: any, i: number, nodes: Element[]) => (nodes[i] as SVGPathElement).getTotalLength())
     timer(1).subscribe(() => {
-      inactive.style('transition', `stroke-dashoffset ${REVEAL_ANIMATION_DURATION}ms linear`);
+      inactive.style('transition', (d: Country) => `stroke-dashoffset ${REVEAL_ANIMATION_DURATION}ms linear`);
     });
   }
 

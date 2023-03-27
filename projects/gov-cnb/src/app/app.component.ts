@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { delay, filter, interval, map, switchMap, take, tap, throttleTime, timer } from 'rxjs';
 import { DataService } from './data.service';
 import { StagesComponent } from './stages/stages.component';
-import { Step, Country, Slide } from './types';
+import { Step, Country, Slide, Bill } from './types';
 
 import { marked } from 'marked';
 import { MarkdownService } from './markdown.service';
@@ -14,15 +14,23 @@ import { MarkdownService } from './markdown.service';
   styleUrls: ['./app.component.less']
 })
 export class AppComponent implements AfterViewInit {
-  countries: Country[];
-  steps: Step[];
-  slides: Slide[];
-  
-  observer: IntersectionObserver;
+
+  @ViewChild('stages') stages: StagesComponent;
+  @ViewChild('slidesContainer') slidesContainer: ElementRef<HTMLElement>;
+  @ViewChildren('steptext') stepTexts: QueryList<ElementRef<HTMLElement>>;
 
   marked = marked;
 
-  @ViewChild('stages') stages: StagesComponent;
+  countries: Country[];
+  steps: Step[];
+  slides: Slide[];
+  bills: Bill[];
+  content: any = {};
+  
+  observer: IntersectionObserver;
+
+  currentSlide = 0;
+  currentStepIndex = -1;
 
   constructor(private data: DataService, private el: ElementRef, public md: MarkdownService) {
     // Marked.js options
@@ -42,6 +50,8 @@ export class AppComponent implements AfterViewInit {
         this.countries = data.countries;
         this.steps = data.steps;
         this.slides = data.slides;
+        this.bills = data.bills;
+        this.content = data.content;
         this.slides.forEach((slide, i) => {
           slide.textHtml = this.md._(slide.text);
         });
@@ -71,20 +81,43 @@ export class AppComponent implements AfterViewInit {
     this.observer = new IntersectionObserver((entries) => {
       for (let entry of entries) {
         if (entry.isIntersecting) {
-          const slideIdx = entry.target.getAttribute('data-slide-idx') || '0';
-          const slide: Slide = this.slides[parseInt(slideIdx, 10)];
+          const slideIdx = entry.target.getAttribute('data-slide-idx');
+          if (!slideIdx) return;
+          this.currentSlide = parseInt(slideIdx, 10);
+          const slide: Slide = this.slides[this.currentSlide];
           const step: Step | undefined = slide.step;
           if (step) {
             console.log('goto', step.name);
+            this.currentStepIndex = this.steps.indexOf(step);
+            this.highlightStepText();
             this.stages.goto(step);
             this.stages.highlight(slide.highlight_country);
           }
           break;
         }
       }
-    }, {threshold: 0.25});
+    }, {threshold: 0.75});
     this.el.nativeElement.querySelectorAll('.slide').forEach((el: HTMLElement) => {
       this.observer.observe(el);
     });
+  }
+
+  highlightStepText() {
+    const el = this.stepTexts.toArray()[this.currentStepIndex].nativeElement;
+    const left = el.offsetLeft;
+    const right = left + el.offsetWidth;
+    const parent = el.offsetParent as HTMLElement;
+    if (parent.scrollLeft > left) {
+      parent.scrollTo({left, behavior: 'smooth'});
+    } else if (parent.scrollLeft + parent.offsetWidth < right) {
+      parent.scrollTo({left: right - parent.offsetWidth, behavior: 'smooth'});
+    }
+  }
+
+  scrollMore() {
+    const el = this.el.nativeElement as HTMLElement;
+    const height = this.el.nativeElement.offsetHeight * 1.25;
+    console.log('scrollMore', el, height);
+    el.scrollBy({top: height, behavior: 'smooth'});
   }
 }

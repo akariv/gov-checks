@@ -1,7 +1,8 @@
 import { Component, ElementRef, Input, SimpleChanges } from '@angular/core';
 import { path } from 'd3-path';
 import { select } from 'd3-selection';
-import { delay, filter, ReplaySubject, switchMap, tap, timer } from 'rxjs';
+import { animationFrameScheduler, delay, EMPTY, filter, interval, ReplaySubject, switchMap, take, tap, timer } from 'rxjs';
+import { flag_names, flags } from '../flags';
 import { IStage } from '../stage/istage';
 import { LayoutUtils } from '../stage/layout-utils';
 import { REVEAL_ANIMATION_DURATION } from '../stages/animations';
@@ -21,21 +22,61 @@ export class StageIntroComponent implements IStage {
 
   ready = new ReplaySubject<void>(1);
   params = new ReplaySubject<StageData>(1);
+  countrySelections = new ReplaySubject<Country[]>(1);
   svg: any;
 
   revealed = false;
   layoutUtils: LayoutUtils;
+  animateCountry: string[];
+  countryPositions: {[key: string]: any} = {};
+  selectedCountries: Country[] = [];
+  introducedCountries: {[key: string]: boolean} = {};
 
   constructor(public el: ElementRef) {
     this.ready.pipe(
       switchMap(() => this.params),
       filter((data) => !!data),
-      tap((data) => {
-        this.redraw(data);
-      }),
       delay(1),
-    ).subscribe((data) => {
-      this.redraw(data);
+      tap((data) => {
+        this.prepareCountryPositions(data);
+      }),
+      switchMap(() => interval(25, animationFrameScheduler)),
+      take(flag_names.length + 1),
+      tap((i) => {
+        this.animateCountry = flag_names.slice(i, i + 10);
+        this.animateCountry.forEach((cn) => {
+          this.introducedCountries[cn] = true;
+        });
+        this.redraw(this.data);
+      }),
+      switchMap((i) => {
+        if (this.animateCountry.length === 0) {
+          return this.countrySelections;
+        } else {
+          return EMPTY;
+        }
+      })
+    ).subscribe((countries) => {
+      console.log('SELECTING COUNTRIES', countries);
+      this.selectedCountries = countries;
+      this.redraw(this.data);
+    });
+  }
+
+  prepareCountryPositions(data: StageData) {
+    flag_names.forEach((cn: string) => {
+      const activeCountry = data.active.find((c) => c.name === cn);
+      if (activeCountry && activeCountry.prevPosition) {
+        this.countryPositions[cn] = {
+          x: this.x(activeCountry.prevPosition),
+          y: this.y(activeCountry.prevPosition)
+        };
+      } else {
+        this.countryPositions[cn] = {
+          x: Math.random() * this.width,
+          y: Math.random() * this.height
+        };
+      }
     });
   }
 
@@ -74,18 +115,18 @@ export class StageIntroComponent implements IStage {
     const group = this.svg;
     // BG countries
     group.selectAll('.bg-points')
-      .data(Array(195 - data.active.length).map((_, i) => [i]))
+      .data(flag_names.filter((cn) => !data.active.find((c) => c.name === cn)).filter((c) => !!this.introducedCountries[c]))
       .enter()
       .append('circle')
       .attr('class', 'bg-points')
-      .attr('cx', (d: any) => Math.random() * this.width)
-      .attr('cy', (d: any) => Math.random() * this.height)
+      .attr('cx', (d: any) => this.countryPositions[d].x)
+      .attr('cy', (d: any) => this.countryPositions[d].y)
       .attr('r', 2)
       .style('fill', '#cccccc');
 
     // Paths
     const active = group.selectAll('.path')
-      .data(data.active, (d: any) => (d as Country).name);
+      .data(data.active);
     active.enter()
       .append('path')
       .attr('class', 'path')
@@ -102,15 +143,32 @@ export class StageIntroComponent implements IStage {
     });
 
     const fgPoints = group.selectAll('.fg-points')
-      .data(data.active);
+      .data(data.active.filter((c) => !!this.introducedCountries[c.name]));
     fgPoints.enter()
       .append('circle')
       .attr('class', 'fg-points');
     fgPoints
-      .attr('cx', (d: any) => this.layoutUtils.x(d.prevPosition))
-      .attr('cy', (d: any) => this.layoutUtils.y(d.prevPosition))
-      .attr('r', 3)
+      .attr('cx', (d: any) => this.countryPositions[d.name].x)
+      .attr('cy', (d: any) => this.countryPositions[d.name].y)
+      .attr('r', 2)
       .style('fill', '#cccccc');
+
+    const showFlags = new Set([...this.selectedCountries.map((c) => c.name), ...this.animateCountry]);
+    const flagImages = group.selectAll('.flag')
+      .data(flag_names);
+    flagImages.enter()
+      .append('g')
+      .attr('class', 'flag')
+      .attr('transform', (d: any) => `translate(${this.countryPositions[d].x - 10}, ${this.countryPositions[d].y - 10})`)
+      // .attr('x', (d: any) => this.countryPositions[d].x - 10)
+      // .attr('y', (d: any) => this.countryPositions[d].y - 10)
+      .append('image')
+      .attr('xlink:href', (d: string) => flags[d])
+      .attr('width', 20)
+      .attr('height', 20);
+    flagImages
+      .attr('class', (d: string) => 'flag' + (showFlags.has(d) ? ' show' : ''))
+    flagImages.exit().remove();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -123,14 +181,10 @@ export class StageIntroComponent implements IStage {
     if (!this.revealed) {
       this.revealed = true;
       this.svg.attr('class', 'revealed');
-      console.log('REVEAL', this.data.name, this.data.display, this.data.active);
     }
   }
   
   selectCountries(countries: Country[]) {
-    // [...this.data.active, ...this.data.inactive].forEach((c) => {
-    //   c.selected = countries.find((cc) => cc.name === c.name) ? true : false;
-    // });
-    this.redraw(this.data);
+    this.countrySelections.next(countries);
   }
 }

@@ -12,5 +12,21 @@
                 // animation: dash 2s linear forwards;
             }
         }
+        .flag {
+            image {
+                transform: scale(0);
+                transform-origin: 10px 10px;
+                opacity: 0;
+                transition: all 1s ease-in-out; 
+            }
+
+            &.show {
+                image {
+                    transform: scale(1);
+                    opacity: 1;
+                    transition: all 0.1s ease-in-out; 
+                }
+            }
+        }
     }
 }

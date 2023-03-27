@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { StageComponent } from './stage/stage.component';
 import { StagesComponent } from './stages/stages.component';
 import { StageIntroComponent } from './stage-intro/stage-intro.component';
+import { BillsComponent } from './bills/bills.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { StageIntroComponent } from './stage-intro/stage-intro.component';
     StageComponent,
     StagesComponent,
     StageIntroComponent,
+    BillsComponent,
   ],
   imports: [
     BrowserModule,

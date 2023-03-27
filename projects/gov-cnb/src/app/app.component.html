@@ -1,8 +1,36 @@
+<div class='slides' *ngIf='slides' #slidesContainer>
+  <div class='slide' *ngFor='let slide of slides; let i = index' [attr.data-slide-idx]='i' [innerHtml]='slide.textHtml'
+    [class.laws-slide]='i === content.lawsSlideIndex'
+  >
+  </div>
+  <div class='mini slide'>
+    <p>יש אנשים שחשוב שיראו את זה.<br/><strong>שתפו איתם עכשיו</strong></p>
+    <img class='share' src='assets/img/temp-share.svg'/>
+  </div>
+</div>
 <ng-container *ngIf='countries && steps'>
   <app-stages [countries]='countries' [steps]='steps' #stages></app-stages>
 </ng-container>
-<div class='slides' *ngIf='slides'>
-  <div class='slide' *ngFor='let slide of slides; let i = index' [attr.data-slide-idx]='i' [innerHtml]='slide.textHtml'>
+<ng-container *ngIf='bills'>
+  <app-bills [currentSlide]='currentSlide' [bills]='bills' [content]='content' (proceed)='scrollMore()'></app-bills>
+</ng-container>
+<img class='scroll-on' src='assets/img/scrolldown.svg'/>
+<div class='steps-guide' [class.visible]='currentSlide > content.lawsSlideIndex + 1'>
+  <div class='step' *ngFor='let step of steps; let idx = index;'>
+    <div class='step-text' [class.active]='idx === currentStepIndex' [class.disabled]='idx > currentStepIndex' #steptext>{{step.display}}</div>
   </div>
-  <img class='scroll-on' src='assets/img/scrolldown.svg'/>
+</div>
+
+<div class='footer'>
+  <div class='footer-section' *ngIf='content.methodology'>
+    <h3>מתודולוגיה ונתונים</h3>
+    <div [innerHTML]="md._(content.methodology)"></div>
+  </div>
+  <div class='footer-section' *ngIf='content.credits'>
+    <h3>קרדיטים</h3>
+    <div [innerHTML]="md._(content.credits)"></div>
+  </div>
+</div>
+<div class='berl'>
+  <img src='assets/img/berl.svg'/>
 </div>

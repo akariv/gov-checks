@@ -4,4 +4,17 @@
     letter-spacing: -0.03em;
 }
 
+.overflow-scroll {
+    /*FireFox*/
+    scrollbar-width: none;
+    /*IE10+*/
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    &::-webkit-scrollbar {
+    /*Chrome, Safari, Edge*/
+        display: none;
+    }
+    overflow: scroll;
+}
+
 @blue: #0052B4;
+@bg: #FAFAFA;
