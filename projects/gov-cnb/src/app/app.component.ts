@@ -42,6 +42,10 @@ export class AppComponent implements AfterViewInit {
       const html = linkRenderer.call(renderer, href, title, text);
       return localLink ? html : html.replace(/^<a /, `<a target="_blank" rel="noreferrer noopener nofollow" `);
     };
+    renderer.codespan = (code: string) => {
+      const splitPoint = code.indexOf(' ');
+      return `<div class="step-number">${code.slice(0, splitPoint)}</div><div class="step-title">${code.slice(splitPoint + 1)}</div>`;
+    };
     marked.use({renderer});
   }
 
