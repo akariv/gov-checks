@@ -9,6 +9,7 @@ import { StageComponent } from './stage/stage.component';
 import { StagesComponent } from './stages/stages.component';
 import { StageIntroComponent } from './stage-intro/stage-intro.component';
 import { BillsComponent } from './bills/bills.component';
+import { CountryHoverComponent } from './country-hover/country-hover.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { BillsComponent } from './bills/bills.component';
     StagesComponent,
     StageIntroComponent,
     BillsComponent,
+    CountryHoverComponent,
   ],
   imports: [
     BrowserModule,

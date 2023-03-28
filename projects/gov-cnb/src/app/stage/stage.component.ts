@@ -1,6 +1,6 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { delay, filter, ReplaySubject, switchMap, tap, timer } from 'rxjs';
-import { Country, Position, StageData } from '../types';
+import { Country, Highlight, Position, StageData } from '../types';
 import { select } from 'd3-selection';
 import { path } from 'd3-path';
 import { LayoutUtils } from './layout-utils';
@@ -15,6 +15,10 @@ import { REVEAL_ANIMATION_DURATION } from '../stages/animations';
 export class StageComponent implements AfterViewInit, OnChanges, IStage {
 
   @Input() data: StageData;
+
+  @Output() hover = new EventEmitter<Highlight[]>();
+
+  highlighted: Highlight[] = [];
 
   height = 0;
   width = 0;
@@ -87,6 +91,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
         .append('g');
     }
     const group = this.svg;
+
     const active = group.selectAll('.path.active')
       .data(data.active, (d: any) => (d as Country).name);
     active.enter()
@@ -95,11 +100,11 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
     active.exit().remove();
     active
       .style('stroke', (d: any) => d.selected ? `url(#fadeGrad${data.name})` : '#cccccc')
-      .style('stroke-width', 1)
+      .style('stroke-width', (d: any) => d.name === 'israel' ? 2 : 1)
       .style('fill', 'none')
       .attr('d', (d: any) => this.pathGenerator(d))
       .style('stroke-dasharray', (d: any, i: number, nodes: Element[]) => (nodes[i] as SVGPathElement).getTotalLength())
-      .style('stroke-dashoffset', (d: any, i: number, nodes: Element[]) => (nodes[i] as SVGPathElement).getTotalLength())
+      .style('stroke-dashoffset', (d: any, i: number, nodes: Element[]) => (nodes[i] as SVGPathElement).getTotalLength());
     timer(1).subscribe(() => {
       active.style('transition', (d: Country) => `stroke-dashoffset ${REVEAL_ANIMATION_DURATION}ms linear`);
     });
@@ -112,14 +117,28 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
     inactive.exit().remove();
     inactive
       .style('stroke', (d: any) => d.selected ? `url(#fadeGrad${data.name})` : '#cccccc')
-      .style('stroke-width', 1)
+      .style('stroke-width', (d: any) => d.name === 'israel' ? 2 : 1)
       .style('fill', 'none')
       .attr('d', (d: any) => this.pathGenerator(d))
       .style('stroke-dasharray', (d: any, i: number, nodes: Element[]) => (nodes[i] as SVGPathElement).getTotalLength())
-      .style('stroke-dashoffset', (d: any, i: number, nodes: Element[]) => (nodes[i] as SVGPathElement).getTotalLength())
+      .style('stroke-dashoffset', (d: any, i: number, nodes: Element[]) => (nodes[i] as SVGPathElement).getTotalLength());
     timer(1).subscribe(() => {
       inactive.style('transition', (d: Country) => `stroke-dashoffset ${REVEAL_ANIMATION_DURATION}ms linear`);
     });
+    const hoverable = group.selectAll('.path.hoverable')
+      .data([...data.active, ...data.inactive], (d: any) => (d as Country).name);
+    hoverable.enter()
+      .append('path')
+      .attr('class', 'path hoverable');
+    hoverable.exit().remove();
+    hoverable
+      .style('stroke', '#ffffff00')
+      .style('stroke-width', 8)
+      .style('fill', 'none')
+      .attr('d', (d: any) => this.pathGenerator(d))
+      .on('mouseover', (_: Event, d: Country) => this.hover.emit([...this.highlighted, {country: d, stepName: this.data.name}]))
+      .on('mouseout', () => this.hover.emit(this.highlighted))
+    ;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -137,6 +156,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
   }
   
   selectCountries(countries: Country[]) {
+    this.highlighted = [];
     [this.data.active, this.data.inactive].forEach(lists => {
       let selectedNum = 0;
       let lastSelected = false;
@@ -154,9 +174,13 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
           }
           c.position.selectedNum = selectedNum;
         }
+        if (c.selected) {
+          this.highlighted.push({country: c, stepName: this.data.name});
+        }
       });
     });
     this.redraw(this.data);
+    this.hover.emit(this.highlighted);
   }
 
 }

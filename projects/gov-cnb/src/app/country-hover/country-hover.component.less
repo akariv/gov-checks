@@ -1,0 +1,83 @@
+@import '../common.less';
+
+:host {
+    display: flex;
+    flex-flow: column;
+    align-items: flex-start;
+    transform: translateX(-100%)translateX(32.5px)translateY(4px);
+    pointer-events: all !important;
+    
+    &:hover {
+        z-index: 10;
+        border: 1px solid red;
+    }
+
+    .pin-up {
+        margin-right: 16px;
+    }
+
+    .flag {
+        width: 30px;
+        height: 30px;
+        position: relative;
+        top: -32px;
+        margin-bottom: -20px;
+        right: 17px;
+    }
+
+    .backdrop {
+        background: rgba(250, 250, 250, 0.5);
+        backdrop-filter: blur(16px);
+        .country-name {
+            .font;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 15px;
+            color: @blue;
+            padding-right: 16px;
+        }
+    
+        .steps {
+            margin-top: 4px;        
+            .step {
+                display: flex;
+                flex-flow: row nowrap;
+                align-items: center;
+    
+                .step-color {
+                    flex: 0 0 auto;
+                }
+                .step-text {
+                    .font;
+                    font-weight: 400;
+                    font-size: 12px;
+                    line-height: 16px;
+                }
+    
+                &:not(.active) {
+                    .step-color {
+                        width: 16px;
+                        height: 0px;
+                        background-color: transparent !important;
+                    }
+                    .step-text {
+                        text-decoration-line: line-through;
+                        color: #828282;    
+                    }
+                }
+    
+                &.active {
+                    .step-color {
+                        width: 6px;
+                        height: 6px;
+                        border-radius: 50%;
+                        margin: 0 5px;    
+                    }
+                    .step-text {
+                        color: @blue;
+                    }
+                }
+            }
+        }
+    }
+}

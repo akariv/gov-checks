@@ -44,7 +44,7 @@ export class AppComponent implements AfterViewInit {
     };
     renderer.codespan = (code: string) => {
       const splitPoint = code.indexOf(' ');
-      return `<div class="step-number">${code.slice(0, splitPoint)}</div><div class="step-title">${code.slice(splitPoint + 1)}</div>`;
+      return `<span class="step-number">${code.slice(0, splitPoint)}</span><span class="step-title">${code.slice(splitPoint + 1)}</span>`;
     };
     marked.use({renderer});
   }

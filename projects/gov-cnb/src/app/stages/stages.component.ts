@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, Input, NgZone, OnInit, QueryList,
 import { delay, tap, timer } from 'rxjs';
 import { IStage } from '../stage/istage';
 import { LayoutUtils } from '../stage/layout-utils';
-import { Country, Point, Position, StageData, Step } from '../types';
+import { Country, Highlight, Point, Position, StageData, Step } from '../types';
 import { AnimationHandler, Animator, PointAnimationHandler, POINT_ANIMATION_DURATION, REVEAL_ANIMATION_DURATION, ScrollAnimationHandler, SCROLL_ANIMATION_DURATION } from './animations';
 
 @Component({
@@ -26,7 +26,9 @@ export class StagesComponent implements AfterViewInit {
 
   observer: IntersectionObserver;
   currentStage: IStage;
-  
+  currentStep: Step;
+  currentStepIndex = 0;
+
   stageComponents: IStage[] = [];
 
   positions: {[key: string]: {[key: string]: Position}} = {};
@@ -44,6 +46,8 @@ export class StagesComponent implements AfterViewInit {
   ready = false;
   firstTime = true;
   lastMovePoints = -1;
+  hoverX: number[] = [];
+  hoverCountries: Highlight[] = [];
 
   constructor(private el: ElementRef, private ngZone: NgZone) {
     this.animator = new Animator(ngZone);
@@ -221,6 +225,8 @@ export class StagesComponent implements AfterViewInit {
       });
       obs = timer(REVEAL_ANIMATION_DURATION * 0.5);
     }
+    this.currentStep = step;
+    this.currentStepIndex = stepIndex;
     this.currentStage = this.stageComponents[stepIndex];
     obs.subscribe(() => {
       if (this.currentStage === this.stageComponents[stepIndex]) {
@@ -296,6 +302,24 @@ export class StagesComponent implements AfterViewInit {
         }
       }
       // console.log('MOVE POINTS', stepIndex, stepIndex_, height.height, point.step.name, point.country.name, point.targetX, point.targetY);
+    });
+  }
+
+  hoverPosition(event: Highlight[]) {
+    console.log('event', event, this.currentStep?.name);
+    const stepName = event?.[0].stepName || '';
+    if (!event) {
+      this.hoverCountries = [];
+      this.hoverX = [];      
+    } else if (stepName === this.currentStep?.name) {
+      const stageLeft = this.simpleStages.get(0)?.el.nativeElement.getBoundingClientRect().left || 0;
+      this.hoverCountries = event;
+      this.hoverX = event.map((h) => stageLeft + this.layoutUtils.x(h.country.position));
+    }
+    const countryNames = event?.map((h) => h.country.name) || [];
+    this.pointAnimations.forEach((anim) => {
+      const active = anim.dstActive || countryNames.indexOf(anim.point.country.name) >= 0;
+      anim.point.updateActive(active);
     });
   }
 

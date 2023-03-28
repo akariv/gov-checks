@@ -1,9 +1,13 @@
 <div class='container' [style.top]='scrollAnimation.scrollTop + "px"'>
     <app-stage-intro [data]='introStageData' #intro></app-stage-intro>
-    <app-stage [data]='stage' *ngFor='let stage of stages' #stage></app-stage>
+    <app-stage [data]='stage' (hover)='hoverPosition($event)' *ngFor='let stage of stages' #stage></app-stage>
     <div class='points'>
         <div class='point' *ngFor='let point of points' #points [attr.data-id]='point.id'
         ></div>    
     </div>
+    <ng-container *ngFor='let hoverCountry of hoverCountries; let i = index'>
+        <app-country-hover [style.left]='hoverX[i] + "px"' *ngIf='!animator.ongoing || true'
+                           [country]='hoverCountry.country' [steps]='steps' [currentStepIndex]='currentStepIndex'></app-country-hover>
+    </ng-container>
     <div class='buffer'></div>
 </div>

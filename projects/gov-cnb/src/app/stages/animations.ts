@@ -120,6 +120,7 @@ export class Animator {
   public animationHandlers: AnimationHandler[] = [];
   animateRequested = false;
   animateRescue = new Subject<DOMHighResTimeStamp>();
+  ongoing_ = false;
 
   constructor(private ngZone: NgZone) {
     console.log('Animator created');
@@ -143,6 +144,7 @@ export class Animator {
     } catch (e) {
       console.error(e);
     }
+    this.ongoing_ = ongoing > 0;
     if (ongoing > 0) {
       // console.log('animation ongoing', ongoing);
       this.requestAnimation();
@@ -158,5 +160,9 @@ export class Animator {
         this.animateRescue.next(performance.now());
       }
     }
+  }
+
+  get ongoing() {
+    return this.ongoing_;
   }
 }

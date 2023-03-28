@@ -1,0 +1,11 @@
+<img src='../../assets/img/pin-up.svg' class='pin-up'/>
+<img [src]='flag' class='flag'/>
+<div backdrop>
+    <div class='country-name'>{{country.display}}</div>
+    <div class='steps'>
+        <div class='step' *ngFor='let step of thisSteps; let i = index' [class.active]='thisStepsActives[i]'>
+            <span class='step-color' [style.backgroundColor]='step.color'></span>
+            <span class='step-text'>{{step.display}}</span>
+        </div>
+    </div>    
+</div>
