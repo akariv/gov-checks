@@ -46,8 +46,7 @@ export class StagesComponent implements AfterViewInit {
   ready = false;
   firstTime = true;
   lastMovePoints = -1;
-  hoverX: number[] = [];
-  hoverCountries: Highlight[] = [];
+  highlightCountries: Highlight[] = [];
 
   constructor(private el: ElementRef, private ngZone: NgZone) {
     this.animator = new Animator(ngZone);
@@ -309,14 +308,15 @@ export class StagesComponent implements AfterViewInit {
     console.log('event', event, this.currentStep?.name);
     const stepName = event?.[0].stepName || '';
     if (!event) {
-      this.hoverCountries = [];
-      this.hoverX = [];      
+      this.highlightCountries = [];
     } else if (stepName === this.currentStep?.name) {
       const stageLeft = this.simpleStages.get(0)?.el.nativeElement.getBoundingClientRect().left || 0;
-      this.hoverCountries = event;
-      this.hoverX = event.map((h) => stageLeft + this.layoutUtils.x(h.country.position));
+      this.highlightCountries = event;
+      this.highlightCountries.forEach((h) => {
+        h.x = stageLeft + this.layoutUtils.x(h.country.position);
+      });
     }
-    const countryNames = event?.map((h) => h.country.name) || [];
+    const countryNames = this.highlightCountries.map((h) => h.country.name) || [];
     this.pointAnimations.forEach((anim) => {
       const active = anim.dstActive || countryNames.indexOf(anim.point.country.name) >= 0;
       anim.point.updateActive(active);

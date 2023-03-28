@@ -5,13 +5,17 @@ import { Country, Step } from '../types';
 @Component({
   selector: 'app-country-hover',
   templateUrl: './country-hover.component.html',
-  styleUrls: ['./country-hover.component.less']
+  styleUrls: ['./country-hover.component.less'],
+  host: {
+    '[class.hover]': 'hover'
+  }
 })
 export class CountryHoverComponent implements OnChanges{
 
   @Input() country: Country;
   @Input() steps: Step[];
   @Input() currentStepIndex: number;
+  @Input() hover = false;
 
   thisSteps: Step[] = [];
   thisStepsActives: boolean[] = [];

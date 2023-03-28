@@ -49,7 +49,9 @@ export type Bill = {
 
 export type Highlight = {
   country: Country;
-  stepName: string
+  stepName: string;
+  x?: number;
+  hover?: boolean;
 };
 
 export class Point {

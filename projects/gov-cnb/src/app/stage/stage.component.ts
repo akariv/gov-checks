@@ -136,7 +136,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       .style('stroke-width', 8)
       .style('fill', 'none')
       .attr('d', (d: any) => this.pathGenerator(d))
-      .on('mouseover', (_: Event, d: Country) => this.hover.emit([...this.highlighted, {country: d, stepName: this.data.name}]))
+      .on('mouseover', (_: Event, d: Country) => this.hover.emit([...this.highlighted, {country: d, stepName: this.data.name, hover: true}]))
       .on('mouseout', () => this.hover.emit(this.highlighted))
     ;
   }

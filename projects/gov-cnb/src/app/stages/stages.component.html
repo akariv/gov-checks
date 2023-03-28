@@ -5,9 +5,9 @@
         <div class='point' *ngFor='let point of points' #points [attr.data-id]='point.id'
         ></div>    
     </div>
-    <ng-container *ngFor='let hoverCountry of hoverCountries; let i = index'>
-        <app-country-hover [style.left]='hoverX[i] + "px"' *ngIf='!animator.ongoing || true'
-                           [country]='hoverCountry.country' [steps]='steps' [currentStepIndex]='currentStepIndex'></app-country-hover>
+    <ng-container *ngFor='let highlight of highlightCountries'>
+        <app-country-hover [style.left]='highlight.x + "px"' *ngIf='!animator.ongoing || true'
+                           [country]='highlight.country' [steps]='steps' [currentStepIndex]='currentStepIndex' [hover]='!!highlight.hover'></app-country-hover>
     </ng-container>
     <div class='buffer'></div>
 </div>
