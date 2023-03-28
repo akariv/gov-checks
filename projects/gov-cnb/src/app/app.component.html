@@ -1,6 +1,6 @@
 <img class='title' src='assets/img/title.svg' #title/>
 <div class='slides' *ngIf='slides' #slidesContainer>
-  <div class='slide' *ngFor='let slide of slides; let i = index' [attr.data-slide-idx]='i' [class.laws-slide]='i === content.lawsSlideIndex'>
+  <div class='slide' *ngFor='let slide of slides; let i = index' [attr.data-slide-idx]='i' [class.laws-slide]='i === content.lawsSlideIndex || i === content.lawsSlideIndex + 1'>
     <div class='slide-text' [innerHtml]='slide.textHtml'></div>
   </div>
   <div class='mini slide'>

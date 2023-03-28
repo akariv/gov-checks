@@ -130,9 +130,10 @@ export class AppComponent implements AfterViewInit {
   }
 
   scrollMore() {
-    const el = this.el.nativeElement as HTMLElement;
-    const height = this.el.nativeElement.offsetHeight * 1.25;
-    console.log('scrollMore', el, height);
-    el.scrollBy({top: height, behavior: 'smooth'});
+    // const el = this.el.nativeElement as HTMLElement;
+    // const height = this.el.nativeElement.offsetHeight * 1.25;
+    // console.log('scrollMore', el, height);
+    // el.scrollBy({top: height, behavior: 'smooth'});
+    this.slidesContainer.nativeElement.children[this.content.lawsSlideIndex + 1].scrollIntoView({behavior: 'smooth'});
   }
 }
