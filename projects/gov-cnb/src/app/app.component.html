@@ -18,8 +18,8 @@
 </ng-container>
 <img class='scroll-on' src='assets/img/scrolldown.svg'/>
 <div class='steps-guide' [class.visible]='currentSlide > content.lawsSlideIndex + 1'>
-  <div class='step' *ngFor='let step of steps; let idx = index;'>
-    <div class='step-text' [class.active]='idx === currentStepIndex' [class.disabled]='idx > currentStepIndex' #steptext>{{step.display}}</div>
+  <div class='step' *ngFor='let step of steps; let idx = index;' #steptext>
+    <div class='step-text' [class.active]='idx === currentStepIndex' [class.disabled]='idx > currentStepIndex'>{{step.display}}</div>
   </div>
 </div>
 
