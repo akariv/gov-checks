@@ -180,7 +180,7 @@ export class StageIntroComponent implements IStage {
   reveal() {
     if (!this.revealed) {
       this.revealed = true;
-      this.svg.attr('class', 'revealed');
+      this.svg?.attr('class', 'revealed');
     }
   }
   

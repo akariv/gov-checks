@@ -136,8 +136,8 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       .style('stroke-width', 8)
       .style('fill', 'none')
       .attr('d', (d: any) => this.pathGenerator(d))
-      .on('mouseover', (_: Event, d: Country) => this.hover.emit([...this.highlighted, {country: d, stepName: this.data.name, hover: true}]))
-      .on('mouseout', () => this.hover.emit(this.highlighted))
+      .on('mouseover', (_: Event, d: Country) => this.hover.emit([{stepName: this.data.name}, ...this.highlighted, {country: d, stepName: this.data.name, hover: true}]))
+      .on('mouseout', () => this.hover.emit([{stepName: this.data.name}, ...this.highlighted]))
     ;
   }
 
@@ -156,6 +156,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
   }
   
   selectCountries(countries: Country[]) {
+    console.log('SELECT COUNTRIES', this.data.name, countries);
     this.highlighted = [];
     [this.data.active, this.data.inactive].forEach(lists => {
       let selectedNum = 0;
@@ -180,7 +181,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       });
     });
     this.redraw(this.data);
-    this.hover.emit(this.highlighted);
+    this.hover.emit([{stepName: this.data.name}, ...this.highlighted]);
   }
 
 }

@@ -305,22 +305,25 @@ export class StagesComponent implements AfterViewInit {
   }
 
   hoverPosition(event: Highlight[]) {
-    console.log('event', event, this.currentStep?.name);
-    const stepName = event?.[0].stepName || '';
-    if (!event) {
-      this.highlightCountries = [];
-    } else if (stepName === this.currentStep?.name) {
-      const stageLeft = this.simpleStages.get(0)?.el.nativeElement.getBoundingClientRect().left || 0;
-      this.highlightCountries = event;
-      this.highlightCountries.forEach((h) => {
-        h.x = stageLeft + this.layoutUtils.x(h.country.position);
+    const stepName = event[0].stepName || '';
+    if (stepName === this.currentStep?.name) {
+      if (!event || event.length === 0) {
+        this.highlightCountries = [];
+      } else {  
+        const stageLeft = this.simpleStages.get(0)?.el.nativeElement.getBoundingClientRect().left || 0;
+        this.highlightCountries = event;
+        this.highlightCountries.forEach((h) => {
+          if (h.country) {
+            h.x = stageLeft + this.layoutUtils.x(h.country.position);
+          }
+        });
+      }
+      const countryNames = this.highlightCountries.map((h) => h.country?.name || '') || [];
+      this.pointAnimations.forEach((anim) => {
+        const active = anim.dstActive || countryNames.indexOf(anim.point.country.name) >= 0;
+        anim.point.updateActive(active);
       });
     }
-    const countryNames = this.highlightCountries.map((h) => h.country.name) || [];
-    this.pointAnimations.forEach((anim) => {
-      const active = anim.dstActive || countryNames.indexOf(anim.point.country.name) >= 0;
-      anim.point.updateActive(active);
-    });
   }
 
 }

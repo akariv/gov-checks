@@ -6,7 +6,7 @@
         ></div>    
     </div>
     <ng-container *ngFor='let highlight of highlightCountries'>
-        <app-country-hover [style.left]='highlight.x + "px"' *ngIf='!animator.ongoing || true'
+        <app-country-hover [style.left]='highlight.x + "px"' *ngIf='highlight.country'
                            [country]='highlight.country' [steps]='steps' [currentStepIndex]='currentStepIndex' [hover]='!!highlight.hover'></app-country-hover>
     </ng-container>
     <div class='buffer'></div>

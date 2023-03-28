@@ -48,8 +48,8 @@ export type Bill = {
 };
 
 export type Highlight = {
-  country: Country;
   stepName: string;
+  country?: Country;
   x?: number;
   hover?: boolean;
 };
