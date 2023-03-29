@@ -79,8 +79,9 @@ export class Point {
   }
 
   updateActive(active: boolean) {
+    const className = 'point ' + (this.blink ? 'blink ' : '') + (active ? 'active' : '')
     if (this.el && this.targetActive !== active) {
-      this.el.className = active ? 'point active' : 'point';
+      this.el.className = className;
       this.el.style.backgroundColor = active ? this.step.color : '#cccccc';
       this.targetActive = active;
     }
@@ -88,5 +89,9 @@ export class Point {
 
   get id() {
     return this.country.name + '-' + this.heights['outro'].height;
+  }
+
+  get blink() {
+    return this.country.name === 'israel';
   }
 };

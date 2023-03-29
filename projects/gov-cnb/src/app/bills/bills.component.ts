@@ -55,7 +55,7 @@ export class BillsComponent implements OnChanges, AfterViewInit {
     } else if (this.currentSlide === lawsSlideIndex2) {
       return 'visible';
     }
-    return 'blurred';
+    return 'pre';
   }
 
   selected(bill: Bill) {

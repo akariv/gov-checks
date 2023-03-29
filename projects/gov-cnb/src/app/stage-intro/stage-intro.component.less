@@ -20,18 +20,23 @@
                 transition: all 1s ease-in-out; 
             }
 
+            :not(.show) {
+                image {
+                    transition-delay: 0 !important;
+                }
+            }
             &.show {
                 image {
                     transform: scale(1);
                     opacity: 1;
-                    transition: all 0.1s ease-in-out; 
+                    transition-duration: 0.1s;
                 }
             }
             &.half-show {
                 image {
                     transform: scale(0.5);
                     opacity: 1;
-                    transition: all 0.1s ease-in-out; 
+                    transition-duration: 0.1s;
                 }
             }
         }

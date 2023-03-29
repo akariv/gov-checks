@@ -116,7 +116,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       .attr('class', 'path inactive')
     inactive.exit().remove();
     inactive
-      .style('stroke', (d: any) => d.selected ? `url(#fadeGrad${data.name})` : '#cccccc')
+      .style('stroke', '#cccccc')
       .style('stroke-width', (d: any) => d.name === 'israel' ? 2 : 1)
       .style('fill', 'none')
       .attr('d', (d: any) => this.pathGenerator(d))

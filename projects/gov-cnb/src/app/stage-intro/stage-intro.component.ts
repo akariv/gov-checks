@@ -26,6 +26,7 @@ export class StageIntroComponent implements IStage {
   svg: any;
 
   revealed = false;
+  finishedAnimation = false;
   layoutUtils: LayoutUtils;
   animateCountry: string[] = [];
   countryPositions: {[key: string]: any} = {};
@@ -64,9 +65,11 @@ export class StageIntroComponent implements IStage {
       }),
     ).subscribe((countries) => {
       console.log('SELECTING COUNTRIES', countries);
+      this.finishedAnimation = true;
       this.selectedCountries = countries;
       this.redraw(this.data);
     });
+    this.countrySelections.next([]);
   }
 
   prepareCountryPositions(data: StageData) {
@@ -159,6 +162,9 @@ export class StageIntroComponent implements IStage {
       .style('fill', '#cccccc');
 
     const selectedFlags = this.selectedCountries.map((c) => c.name);
+    if (this.introducedCountries['israel']) {
+      selectedFlags.push('israel');
+    }
     const showFlags = new Set([...selectedFlags, ...this.animateCountry]);
     const flagImages = group.selectAll('.flag')
       .data(flag_names);
@@ -171,9 +177,13 @@ export class StageIntroComponent implements IStage {
       .append('image')
       .attr('xlink:href', (d: string) => flags[d])
       .attr('width', 20)
-      .attr('height', 20);
+      .attr('height', 20)
+    ;
     flagImages
       .attr('class', (d: string) => 'flag' + (showFlags.has(d) ? (selectedFlags.includes(d) ? ' show' : ' half-show') : ''))
+      .select('image')
+      .style('transition-delay', (d: string, i: number) => this.finishedAnimation ? (i * 10) + 'ms' : '0ms')
+    ;
     flagImages.exit().remove();
   }
 

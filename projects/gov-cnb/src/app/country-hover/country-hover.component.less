@@ -7,14 +7,11 @@
     transform: translateX(-100%)translateX(32.5px)translateY(6px);
     pointer-events: none;
     min-width: 200px;
-    
-    &.hover {
-        z-index: 10;
-    }
 
     .pin-up {
         pointer-events: all;
         margin-right: 16px;
+        // animation: appear 250ms ease-out both;
     }
 
     .flag {
@@ -24,6 +21,7 @@
         top: -32px;
         margin-bottom: -20px;
         right: 17px;
+        // animation: appear 250ms ease-out both;
     }
 
     .backdrop {
@@ -84,3 +82,14 @@
         }
     }
 }
+
+// @keyframes appear {
+//     0% {
+//         transform: translateY(8px);
+//         opacity: 0;
+//     }
+//     100% {
+//         transform: translateX(0);
+//         opacity: 1;
+//     }
+// }

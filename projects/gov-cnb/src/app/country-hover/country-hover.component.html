@@ -1,5 +1,5 @@
-<img src='../../assets/img/pin-up.svg' class='pin-up' (mouseover)='hover = true' (mouseout)='hover = false'>
-<img [src]='flag' class='flag'/>
+<img src='../../assets/img/pin-up.svg' class='pin-up' (mouseover)='hover = true' (mouseout)='hover = false' [class.blink]='blink'>
+<img [src]='flag' class='flag' [class.blink]='blink'/>
 <div class='backdrop' *ngIf='hover' 
     [style.left]='moveRight + "px"' 
     [style.visibility]='visible ? "visible" : "hidden"'

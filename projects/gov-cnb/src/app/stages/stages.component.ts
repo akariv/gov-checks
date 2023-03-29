@@ -9,7 +9,10 @@ import { AnimationHandler, Animator, PointAnimationHandler, POINT_ANIMATION_DURA
 @Component({
   selector: 'app-stages',
   templateUrl: './stages.component.html',
-  styleUrls: ['./stages.component.less']
+  styleUrls: ['./stages.component.less'],
+  host: {
+    '[class.hover]': 'hovering()',
+  }
 })
 export class StagesComponent implements AfterViewInit {
 
@@ -237,12 +240,21 @@ export class StagesComponent implements AfterViewInit {
     ).subscribe();
   }
 
-  goto(step: Step | null) {
-    if (step === null) {
-      this.active = false;
-      return;
+  setActive(value: boolean) {
+    console.log('set active', value);
+    this.active = value;
+  }
+
+  hovering(): boolean {
+    for (const highlight of this.highlightCountries) {
+      if (!!highlight?.hover) {
+        return true;
+      }
     }
-    this.active = true;
+    return false;
+  }
+
+  goto(step: Step) {
     let stepIndex = this.steps.findIndex(s => s === step);
     let obs = timer(0);
     if (stepIndex === 1 && this.firstTime) {

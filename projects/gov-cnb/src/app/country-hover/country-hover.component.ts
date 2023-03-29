@@ -29,6 +29,10 @@ export class CountryHoverComponent implements OnChanges{
     return flags[this.country.name];
   }
 
+  get blink() {
+    return this.country.name === 'israel' && this.steps[this.currentStepIndex].name === 'outro';
+  }
+
   ngOnChanges() {
     this.thisSteps = [];
     this.thisStepsActives = [];

@@ -30,6 +30,7 @@ export class AppComponent implements AfterViewInit {
   content: any = {};
   
   observer: IntersectionObserver;
+  activeObserver: IntersectionObserver;
 
   currentSlide = 0;
   currentStepIndex = -1;
@@ -37,6 +38,7 @@ export class AppComponent implements AfterViewInit {
   fbShare: SafeUrl;
   whatsappShare: SafeUrl;
   scrolledOnce = false;
+  shareData: { text: any; url: string; };
 
   constructor(private data: DataService, private el: ElementRef, public md: MarkdownService, private sanitizer: DomSanitizer) {
     // Marked.js options
@@ -58,6 +60,10 @@ export class AppComponent implements AfterViewInit {
   prepareShare() {
     const shareText = this.content.shareText;
     const url = 'https://save-democracy.berl.org.il';
+    this.shareData = {
+      text: shareText,
+      url
+    };
     this.twitterShare = this.sanitizer.bypassSecurityTrustUrl(`http://twitter.com/share?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(url)}`);
     this.fbShare = this.sanitizer.bypassSecurityTrustUrl(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`);
     this.whatsappShare = this.sanitizer.bypassSecurityTrustUrl(`https://wa.me/?text=${encodeURIComponent(shareText)} ${encodeURIComponent(url)}`);
@@ -116,9 +122,6 @@ export class AppComponent implements AfterViewInit {
         let slideIdx_ = entry.target.getAttribute('data-slide-idx');
         if (!slideIdx_) continue;
         const slideIdx = parseInt(slideIdx_, 10);
-        if (slideIdx === this.slides.length - 1 && !entry.isIntersecting) {
-          this.stages.goto(null);
-        }
         if (entry.isIntersecting) {
           this.currentSlide = slideIdx;
           const slide: Slide = this.slides[this.currentSlide];
@@ -130,12 +133,18 @@ export class AppComponent implements AfterViewInit {
             this.stages.goto(step);
             this.stages.highlight(slide.highlight_country);
           }
-          break;
         }
       }
-    }, {threshold: 0.75});
+    }, {threshold: 0.55});
     this.el.nativeElement.querySelectorAll('.slide').forEach((el: HTMLElement) => {
       this.observer.observe(el);
+    });
+    this.activeObserver = new IntersectionObserver((entries) => {
+      console.log('active', entries)
+      this.stages.setActive(!entries[0].isIntersecting);
+    }, {threshold: 0});
+    this.el.nativeElement.querySelectorAll('.footer').forEach((el: HTMLElement) => {
+      this.activeObserver.observe(el);
     });
   }
 
@@ -159,5 +168,13 @@ export class AppComponent implements AfterViewInit {
     // console.log('scrollMore', el, height);
     // el.scrollBy({top: height, behavior: 'smooth'});
     // this.slidesContainer.nativeElement.children[this.content.lawsSlideIndex + 1].scrollIntoView({behavior: 'smooth', 'block': 'nearest'});
+  }
+
+  async mobileShare() {
+    try {
+        await navigator.share(this.shareData);
+    } catch (err) {
+      console.log('Failed to share', err);
+    }
   }
 }
