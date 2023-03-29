@@ -6,6 +6,7 @@ import { Step, Country, Slide, Bill } from './types';
 
 import { marked } from 'marked';
 import { MarkdownService } from './markdown.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 
 @Component({
@@ -32,8 +33,11 @@ export class AppComponent implements AfterViewInit {
 
   currentSlide = 0;
   currentStepIndex = -1;
+  twitterShare: SafeUrl;
+  fbShare: SafeUrl;
+  whatsappShare: SafeUrl;
 
-  constructor(private data: DataService, private el: ElementRef, public md: MarkdownService) {
+  constructor(private data: DataService, private el: ElementRef, public md: MarkdownService, private sanitizer: DomSanitizer) {
     // Marked.js options
     const renderer = new marked.Renderer();
     const linkRenderer = renderer.link;
@@ -47,6 +51,15 @@ export class AppComponent implements AfterViewInit {
       return `<span class="step-number">${code.slice(0, splitPoint)}</span><span class="step-title">${code.slice(splitPoint + 1)}</span>`;
     };
     marked.use({renderer});
+
+  }
+
+  prepareShare() {
+    const shareText = this.content.shareText;
+    const url = 'https://save-democracy.berl.org.il';
+    this.twitterShare = this.sanitizer.bypassSecurityTrustUrl(`http://twitter.com/share?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(url)}`);
+    this.fbShare = this.sanitizer.bypassSecurityTrustUrl(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`);
+    this.whatsappShare = this.sanitizer.bypassSecurityTrustUrl(`https://wa.me/?text=${encodeURIComponent(shareText)} ${encodeURIComponent(url)}`);
   }
 
   ngAfterViewInit() {
@@ -60,6 +73,7 @@ export class AppComponent implements AfterViewInit {
         this.slides.forEach((slide, i) => {
           slide.textHtml = this.md._(slide.text);
         });
+        this.prepareShare();
       }),
       delay(1),
       // switchMap(() => 
@@ -95,10 +109,14 @@ export class AppComponent implements AfterViewInit {
   setupObserver() {
     this.observer = new IntersectionObserver((entries) => {
       for (let entry of entries) {
+        let slideIdx_ = entry.target.getAttribute('data-slide-idx');
+        if (!slideIdx_) continue;
+        const slideIdx = parseInt(slideIdx_, 10);
+        if (slideIdx === this.slides.length - 1 && !entry.isIntersecting) {
+          this.stages.goto(null);
+        }
         if (entry.isIntersecting) {
-          const slideIdx = entry.target.getAttribute('data-slide-idx');
-          if (!slideIdx) return;
-          this.currentSlide = parseInt(slideIdx, 10);
+          this.currentSlide = slideIdx;
           const slide: Slide = this.slides[this.currentSlide];
           const step: Step | undefined = slide.step;
           if (step) {

@@ -1,12 +1,19 @@
 <img class='title' src='assets/img/title.svg' #title/>
 <div class='slides' *ngIf='slides' #slidesContainer>
-  <div class='slide' *ngFor='let slide of slides; let i = index' [attr.data-slide-idx]='i' [class.laws-slide]='i === content.lawsSlideIndex || i === content.lawsSlideIndex + 1'>
+  <div class='slide' *ngFor='let slide of slides; let i = index' 
+      [attr.data-slide-idx]='i' 
+      [attr.id]='slide.slug'
+      [class.laws-slide]='i === content.lawsSlideIndex || i === content.lawsSlideIndex + 1 || i === content.lawsSlideIndex2 || i === content.lawsSlideIndex2 + 2'>
     <div class='slide-text' [innerHtml]='slide.textHtml'></div>
   </div>
   <div class='mini slide'>
     <div class='slide-text'>
       <p>יש אנשים שחשוב שיראו את זה.<br/><strong>שתפו איתם עכשיו</strong></p>
-      <img class='share' src='assets/img/temp-share.svg'/>  
+      <div class='share'>
+        <a class='twitter' [href]='twitterShare' target='_blank'></a>
+        <a class='facebook' [href]='fbShare' target='_blank'></a>
+        <a class='whatsapp' [href]='whatsappShare' target='_blank'></a>
+      </div>
     </div>
   </div>
 </div>
@@ -17,9 +24,10 @@
   <app-bills [currentSlide]='currentSlide' [bills]='bills' [content]='content' (proceed)='scrollMore()'></app-bills>
 </ng-container>
 <img class='scroll-on' src='assets/img/scrolldown.svg'/>
+<a class='skip-to-end' href='#outro'></a>
 <div class='steps-guide' [class.visible]='currentSlide > content.lawsSlideIndex + 1'>
   <div class='step' *ngFor='let step of steps; let idx = index;' #steptext>
-    <div class='step-text' [class.active]='idx === currentStepIndex' [class.disabled]='idx > currentStepIndex'>{{step.display}}</div>
+    <a [href]='"#" + step.name' class='step-text' [class.active]='idx === currentStepIndex' [class.disabled]='idx > currentStepIndex'>{{step.display}}</a>
   </div>
 </div>
 

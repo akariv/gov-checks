@@ -55,7 +55,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
   ngAfterViewInit() {
     this.height = this.el.nativeElement.offsetHeight;
     this.width = this.el.nativeElement.offsetWidth;
-    this.layoutUtils = new LayoutUtils(this.width, this.height);
+    this.layoutUtils = new LayoutUtils(this.width, this.height, this.data.active.length + this.data.inactive.length);
     this.ready.next();
   }
 

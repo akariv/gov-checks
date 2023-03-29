@@ -8,6 +8,7 @@
     pointer-events: none;
     height: 100vh;
     width: 100%;
+    max-width: 1000px;
 
     .bills {
         display: flex;
@@ -104,6 +105,18 @@
         display: none;
     }
     &.state-visible {
+        z-index: 5;
+        .bills {
+            .bill {
+                pointer-events: none;
+                animation-play-state: running;
+            }
+            .mobile({
+                pointer-events: all;
+            });
+        }
+    }
+    &.state-select {
         z-index: 5;
         .bills {
             .bill {

@@ -37,14 +37,21 @@ export class DataService {
       countries.forEach((country: any) => {
         country.steps = country.steps.map((s: string) => stepMap[s]);
       });
+      let id: string | null = null;
       slides.forEach((slide: any) => {
         slide.step = stepMap[slide.step];
+        if (id !== slide.step.name) {
+          id = slide.step.name;
+          slide.slug = id;
+        }
         slide.highlight_country = (slide.highlight_country || []).map((c: string) => countryMap[c]);
       });
       content = {
         credits: content.find((c: any) => c.name === 'credits').text,
         methodology: content.find((c: any) => c.name === 'methodology').text,
         lawsSlideIndex: parseInt(content.find((c: any) => c.name === 'laws-slide-index').text, 10),
+        lawsSlideIndex2: parseInt(content.find((c: any) => c.name === 'laws-slide-index-2').text, 10),
+        shareText: content.find((c: any) => c.name === 'share-text').text,
       };
       this.data.next({countries, steps, slides, bills, content});
       this.data.complete();

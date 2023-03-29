@@ -43,19 +43,24 @@ export class BillsComponent implements OnChanges, AfterViewInit {
 
   get currentState(): string {
     const lawsSlideIndex = this.content.lawsSlideIndex;
+    const lawsSlideIndex2 = this.content.lawsSlideIndex2;
     if (this.currentSlide < lawsSlideIndex) {
       return 'pre';
     } else if (this.currentSlide === lawsSlideIndex) {
-      return 'visible';
+      return 'select';
     } else if (this.currentSlide === lawsSlideIndex + 1) {
       return 'selected';
-    } 
+    } else if (this.currentSlide < lawsSlideIndex2) {
+      return 'blurred';
+    } else if (this.currentSlide === lawsSlideIndex2) {
+      return 'visible';
+    }
     return 'blurred';
   }
 
   selected(bill: Bill) {
     console.log('SELECTED', this.currentState, bill);
-    if (this.currentState === 'visible') {
+    if (this.currentState === 'select') {
       this.selectedBill = bill;
       this.proceed.emit();
     }

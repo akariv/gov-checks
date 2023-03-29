@@ -47,9 +47,10 @@ export class StagesComponent implements AfterViewInit {
   firstTime = true;
   lastMovePoints = -1;
   highlightCountries: Highlight[] = [];
+  active = true;
 
-  constructor(private el: ElementRef, private ngZone: NgZone) {
-    this.animator = new Animator(ngZone);
+  constructor(private el: ElementRef) {
+    this.animator = new Animator();
     this.animator.animationHandlers.push(this.scrollAnimation);
   }
 
@@ -97,6 +98,7 @@ export class StagesComponent implements AfterViewInit {
     });
     this.stages = this.steps.filter((s) => ['introduction'].indexOf(s.name) === -1).map((step) => {
       // console.log('step', step);
+      this.position.index = 0;
       const stageData: StageData = {
         name: step.name,
         display: step.display,
@@ -106,7 +108,7 @@ export class StagesComponent implements AfterViewInit {
       };
       [...stageData.active, ...stageData.inactive].forEach((c) => {
         if (c.position) {
-          c.position.numActive = stageData.active.length;
+          c.position.numInactive = stageData.inactive.length;
         }
       });
       return stageData;
@@ -131,8 +133,29 @@ export class StagesComponent implements AfterViewInit {
           };
         }) as Country[],
         inactive: [],
-      };  
+      };
     }
+    const outroStep = this.stages[this.stages.length - 1];
+    outroStep.active = outroStep.inactive
+      .sort((a, b) => a.steps.length - b.steps.length)
+      .map((c: Country, i) => {
+        return {
+          ...c,
+          position: {
+            layout: 'outro',
+            index: i,
+            active: true,
+            group: c.steps.length
+          },
+        };
+      })
+    outroStep.active
+      .forEach((c: Country, i) => {
+        if (c.position) {
+          this.positions[c.name][outroStep.name] = c.position;
+        }
+      });
+    outroStep.inactive = [];
 
     console.log('stages', this.stages);
     this.points = [];
@@ -179,7 +202,7 @@ export class StagesComponent implements AfterViewInit {
       this.width = 800;
     }
     this.height = this.el.nativeElement.offsetHeight;
-    this.layoutUtils = new LayoutUtils(this.width, this.height);
+    this.layoutUtils = new LayoutUtils(this.width, this.height, this.countries.length);
 
     this.observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -213,7 +236,12 @@ export class StagesComponent implements AfterViewInit {
     ).subscribe();
   }
 
-  goto(step: Step) {
+  goto(step: Step | null) {
+    if (step === null) {
+      this.active = false;
+      return;
+    }
+    this.active = true;
     let stepIndex = this.steps.findIndex(s => s === step);
     let obs = timer(0);
     if (stepIndex === 1 && this.firstTime) {
@@ -230,9 +258,11 @@ export class StagesComponent implements AfterViewInit {
     obs.subscribe(() => {
       if (this.currentStage === this.stageComponents[stepIndex]) {
         const scrollTop = this.height * (stepIndex + (stepIndex > 0 ? 0.5 : 0));
-        this.scrollAnimation.src = -this.scrollAnimation.scrollTop;
-        this.scrollAnimation.dst = scrollTop;
-        this.scrollAnimation.reset(0);
+        if (this.scrollAnimation.dst !== scrollTop) {
+          this.scrollAnimation.src = -this.scrollAnimation.scrollTop;
+          this.scrollAnimation.dst = scrollTop;
+          this.scrollAnimation.reset(0);
+        }
         console.log('GOTO', step, scrollTop);
         this.movePoints(stepIndex);
         this.animator.requestAnimation();  
@@ -280,9 +310,6 @@ export class StagesComponent implements AfterViewInit {
         const dstX = this.layoutUtils.x(position);
         const dstY = (stepIndex_ + 1) * this.height - 8*height.height;
         const active = position.active && step_.name === point.step.name;
-        if (pointAnimation.debug) {
-          console.log('ddd move', stepIndex, active, ':', dstX, dstY, ':', pointAnimation.dstX, pointAnimation.dstY);
-        }
         if ((pointAnimation.dstY < dstY) && !active) {
           pointAnimation.srcX = pointAnimation.dstX;
           pointAnimation.srcY = pointAnimation.dstY || 100000;

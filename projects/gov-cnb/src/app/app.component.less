@@ -27,7 +27,8 @@
     app-bills {
         position: fixed;
         top: 0;
-        left: 0;
+        left: 50%;
+        transform: translateX(-50%);
         height: 100vh;
         width: 100%;
     }
@@ -141,6 +142,44 @@
                 flex: 0 0 25vh;
                 .share {
                     margin-top: 40px;
+                    display: flex;
+                    flex-flow: row;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 12px;
+
+                    a {
+                        width: 42px;
+                        height: 42px;
+                        border-radius: 50%;
+                        background-repeat: no-repeat;
+                        background-position: center;
+                        background-size: contain;
+                        text-decoration: none;
+                        cursor: pointer;
+                        pointer-events: all;
+
+                        &.facebook {
+                            background-image: url(../assets/img/icon-facebook.svg);
+                            &:hover {
+                                background-image: url(../assets/img/icon-facebook-hover.svg);
+                            }
+                        }
+
+                        &.twitter {
+                            background-image: url(../assets/img/icon-twitter.svg);
+                            &:hover {
+                                background-image: url(../assets/img/icon-twitter-hover.svg);
+                            }
+                        }
+
+                        &.whatsapp {
+                            background-image: url(../assets/img/icon-whatsapp.svg);
+                            &:hover {
+                                background-image: url(../assets/img/icon-whatsapp-hover.svg);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -148,8 +187,25 @@
 
     .scroll-on {
         position: absolute;
-        top: calc(100vh ~'-' 24px);
+        top: calc(100vh ~'-' 48px);
         transform: translateY(-100%);
+    }
+    .skip-to-end {
+        position: absolute;
+        top: calc(100vh ~'-' 48px);
+        left: 24px;
+        transform: translateY(-100%);
+        width: 80px;
+        height: 45px;
+        background-image: url(../assets/img/skip-cta.svg);
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+        cursor: pointer;
+        pointer-events: all;
+        &:hover {
+            background-image: url(../assets/img/skip-cta-hover.svg);
+        }
     }
 
     .steps-guide {
@@ -182,7 +238,7 @@
                 font-size: 20px;
                 line-height: 19px;
                 color: @blue;
-    
+                text-decoration: none;
     
                 &.active {
                     font-weight: 700;
@@ -218,7 +274,7 @@
         z-index: 10;
 
         .footer-section {
-            flex: 0 1 360px;
+            flex: 0 1 340px;
             .font;
             font-weight: 400;
             font-size: 16px;

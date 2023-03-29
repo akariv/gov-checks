@@ -27,7 +27,7 @@ export class CountryHoverComponent implements OnChanges{
   ngOnChanges() {
     this.thisSteps = [];
     this.thisStepsActives = [];
-    this.steps.slice(1, this.currentStepIndex + 1).forEach((step) => {
+    this.steps.slice(1, this.currentStepIndex + 1).filter((s) => s.name !== 'outro').forEach((step) => {
       this.thisSteps.push(step);
       this.thisStepsActives.push(this.country.steps.map((s) => s.name).includes(step.name));
     });

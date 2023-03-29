@@ -11,7 +11,6 @@ export class AnimationHandler {
   duration = 100;
   startTime: DOMHighResTimeStamp | null = null;
   stopped = false;
-  debug = false;
 
   constructor(duration: number, delay?: number) {
     this.duration = duration;
@@ -22,46 +21,28 @@ export class AnimationHandler {
 
   animate(now: DOMHighResTimeStamp): number {
     if (this.stopped) {
-      if (this.debug) {
-        console.log('ddd stopped');
-      }  
       return 0;
     }
     if (!this.startTime) {
-      if (this.debug) {
-        console.log('ddd starttime', now);
-      }  
       this.startTime = now;
     }
     let diff = now - this.startTime;
     if (diff < this.delay) {
-      if (this.debug) {
-        // console.log('ddd waiting', diff);
-      }  
       return 1;
     }
     diff -= this.delay;
     if (diff <= this.duration) {
       const t = diff / this.duration;
-      if (this.debug) {
-        // console.log('ddd running', diff);
-      }  
       this.interpolate(t);
       return 1 - t;
     } else {
       this.interpolate(1);
-      if (this.debug) {
-        console.log('ddd stopping', diff);
-      }  
       this.stopped = true;
     }
     return 0;
   }
 
   reset(delay?: number) {
-    if (this.debug) {
-      console.log('ddd resetting', delay);
-    }  
     this.delay = delay || 0;
     this.startTime = null;
     this.stopped = false;
@@ -81,9 +62,6 @@ export class PointAnimationHandler extends AnimationHandler {
   }
 
   override interpolate(t: number) {
-    if (this.debug) {
-      console.log('ddd interpolate', t);
-    }
     let targetX = this.dstX;
     let targetY = this.dstY;
     if (t < 1) {
@@ -93,7 +71,7 @@ export class PointAnimationHandler extends AnimationHandler {
       const yCoeff = 1.5 * t * _t;
       targetY = this.srcY * (_t * _t * _t + yCoeff) + this.dstY * (t * t * t + yCoeff);        
     }
-    this.point.updatePos(targetX, targetY, this.debug);
+    this.point.updatePos(targetX, targetY);
     if (t > 0.5) {
       this.point.updateActive(this.dstActive);
     }
@@ -122,25 +100,23 @@ export class Animator {
   animateRescue = new Subject<DOMHighResTimeStamp>();
   ongoing_ = false;
 
-  constructor(private ngZone: NgZone) {
-    console.log('Animator created');
-    this.animateRescue.pipe(
-      debounceTime(500),
-    ).subscribe((now) => {
-      console.log('rescue animation', now);
-      this.requestAnimation(true);
-    });
-  }
+  // constructor(private ngZone: NgZone) {
+  //   console.log('Animator created');
+  //   this.animateRescue.pipe(
+  //     debounceTime(500),
+  //   ).subscribe((now) => {
+  //     console.log('rescue animation', now);
+  //     this.requestAnimation(true);
+  //   });
+  // }
 
   animate(now: DOMHighResTimeStamp) {
     this.animateRequested = false;
     let ongoing = 0;
     try {
-      this.ngZone.run(() => {
-        this.animationHandlers.forEach(h => {
-          ongoing += h.animate(now);
-        });  
-      });
+      this.animationHandlers.forEach(h => {
+        ongoing += h.animate(now);
+      });  
     } catch (e) {
       console.error(e);
     }

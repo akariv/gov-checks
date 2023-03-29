@@ -38,6 +38,7 @@ export class StageIntroComponent implements IStage {
       filter((data) => !!data),
       delay(1),
       tap((data) => {
+        this.layoutUtils = new LayoutUtils(this.width, this.height, this.data.active.length);
         this.prepareCountryPositions(data);
       }),
       switchMap(() => interval(25, animationFrameScheduler)),
@@ -91,7 +92,6 @@ export class StageIntroComponent implements IStage {
   ngAfterViewInit() {
     this.height = this.el.nativeElement.offsetHeight;
     this.width = this.el.nativeElement.offsetWidth;
-    this.layoutUtils = new LayoutUtils(this.width, this.height);
     this.ready.next();
   }
 

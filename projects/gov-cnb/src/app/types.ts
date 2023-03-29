@@ -3,6 +3,7 @@ import { SafeHtml } from "@angular/platform-browser";
 export type Slide = {
   id: string;
   text: string;
+  slug?: string;
   textHtml?: SafeHtml;
   step: Step
   highlight_country: Country[];
@@ -15,13 +16,14 @@ export type Step = {
 };
 
 export type Position = {
-  layout?: 'init' | 'intro';
+  layout?: 'init' | 'intro' | 'outro';
   active: boolean;
   index: number;
   height?: number;
   width?: number;
-  numActive?: number;
+  numInactive?: number;
   selectedNum?: number;
+  group?: number;
 };
 
 export type Country = {
@@ -67,10 +69,7 @@ export class Point {
   targetActive?: boolean;
   el?: HTMLElement;
 
-  updatePos(x: number, y: number, debug?: boolean) {
-    if (debug) {
-      console.log('ddd updatePos', x, y, !!this.el, this.targetY !== y);
-    }
+  updatePos(x: number, y: number) {
     if (this.el && this.targetY !== y) {
       this.el.style.left = x + 'px';
       this.el.style.top = y + 'px';
