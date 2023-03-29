@@ -78,11 +78,12 @@ export class Point {
     }
   }
 
-  updateActive(active: boolean) {
-    const className = 'point ' + (this.blink ? 'blink ' : '') + (active ? 'active' : '')
-    if (this.el && this.targetActive !== active) {
+  updateActive(active: boolean, highlight?: boolean) {
+    const className = 'point ' + (this.blink ? 'blink ' : '') + (active ? 'active ' : '') + (highlight ? 'highlight ' : '');
+    if (this.el) {
       this.el.className = className;
       this.el.style.backgroundColor = active ? this.step.color : '#cccccc';
+      this.el.style.boxShadow = highlight ? `0px 0px 3px 3px ${this.step.color}4c` : 'none';
       this.targetActive = active;
     }
   }

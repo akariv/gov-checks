@@ -360,9 +360,11 @@ export class StagesComponent implements AfterViewInit {
         });
       }
       const countryNames = this.highlightCountries.map((h) => h.country?.name || '') || [];
+      const hoverNames = this.highlightCountries.filter((h) => h.hover).map((h) => h.country?.name || '') || [];
       this.pointAnimations.forEach((anim) => {
-        const active = anim.dstActive || countryNames.indexOf(anim.point.country.name) >= 0;
-        anim.point.updateActive(active);
+        const active = anim.dstActive || hoverNames.indexOf(anim.point.country.name) >= 0;
+        const highlight = anim.dstActive && countryNames.indexOf(anim.point.country.name) >= 0;
+        anim.point.updateActive(active, highlight);
       });
     }
   }
