@@ -310,12 +310,12 @@ export class StagesComponent implements AfterViewInit {
         const dstX = this.layoutUtils.x(position);
         const dstY = (stepIndex_ + 1) * this.height - 8*height.height;
         const active = position.active && step_.name === point.step.name;
+        pointAnimation.dstActive = active;
         if ((pointAnimation.dstY < dstY) && !active) {
           pointAnimation.srcX = pointAnimation.dstX;
           pointAnimation.srcY = pointAnimation.dstY || 100000;
           pointAnimation.dstX = dstX;
           pointAnimation.dstY = dstY;
-          pointAnimation.dstActive = active;
           pointAnimation.reset(wait);
           if (Math.random() > 0.5 && stepIndex > 1) {
             wait += 25;
