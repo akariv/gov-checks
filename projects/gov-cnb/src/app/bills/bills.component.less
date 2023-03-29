@@ -131,6 +131,7 @@
         z-index: 5;
         .bills {
             .bill {
+                animation-play-state: running;
                 pointer-events: none;
                 .bill-box {
                     transform: rotate(0) !important;
@@ -144,6 +145,7 @@
     &.state-blurred {
         .bills {
             .bill {
+                animation-play-state: running;
                 pointer-events: none;
                 &:not(.selected) {
                     display: none;
