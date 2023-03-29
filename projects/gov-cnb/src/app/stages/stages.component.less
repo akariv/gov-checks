@@ -1,3 +1,5 @@
+@import '../common.less';
+
 :host {
     width: 100%;
     height: 100vh;
@@ -26,9 +28,15 @@
             .point {
                 position: absolute;
                 width: 8px;
-                height: 8px;
+                height: 12px;
                 margin-left: -4px;
-                margin-top: -4px;
+                margin-top: -6px;
+                .mobile({
+                    width: 5px;
+                    height: 8px;
+                    margin-left: -2.5px;
+                    margin-top: -4px;
+                });
                 border-radius: 50%;
                 background-color: #ccc;
 

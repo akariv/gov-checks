@@ -1,4 +1,5 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, ViewChild } from '@angular/core';
+import { timer } from 'rxjs';
 import { flags } from '../flags';
 import { Country, Step } from '../types';
 
@@ -17,8 +18,12 @@ export class CountryHoverComponent implements OnChanges{
   @Input() currentStepIndex: number;
   @Input() hover = false;
 
+  @ViewChild('backdrop') backdrop: ElementRef<HTMLDivElement>;
+
   thisSteps: Step[] = [];
   thisStepsActives: boolean[] = [];
+  moveRight = 0;
+  visible = false;
 
   get flag() {
     return flags[this.country.name];
@@ -30,6 +35,15 @@ export class CountryHoverComponent implements OnChanges{
     this.steps.slice(1, this.currentStepIndex + 1).filter((s) => s.name !== 'outro').forEach((step) => {
       this.thisSteps.push(step);
       this.thisStepsActives.push(this.country.steps.map((s) => s.name).includes(step.name));
+    });
+    this.moveRight = 0;
+    this.visible = false;
+    timer(1).subscribe(() => {
+      const left = this.backdrop.nativeElement.getBoundingClientRect().left;
+      if (left < 16) {
+        this.moveRight = 16-left;
+      }
+      this.visible = true;
     });
   }
 }

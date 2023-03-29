@@ -36,6 +36,7 @@ export class AppComponent implements AfterViewInit {
   twitterShare: SafeUrl;
   fbShare: SafeUrl;
   whatsappShare: SafeUrl;
+  scrolledOnce = false;
 
   constructor(private data: DataService, private el: ElementRef, public md: MarkdownService, private sanitizer: DomSanitizer) {
     // Marked.js options
@@ -75,7 +76,7 @@ export class AppComponent implements AfterViewInit {
         });
         this.prepareShare();
       }),
-      delay(1),
+      delay(50),
       // switchMap(() => 
       //   interval(10000).pipe(
       //     filter(x => !!x),
@@ -94,15 +95,18 @@ export class AppComponent implements AfterViewInit {
     ).subscribe(() => {
       this.setupObserver();
       const content = this.slidesContainer.nativeElement.querySelector('.slide:first-child > *:first-child') as HTMLElement;
-      const titleEl = this.titleImg.nativeElement as HTMLElement;
-      titleEl.style.top = (content.getBoundingClientRect().top - 120) + 'px';
+      const titleEl = this.titleImg.nativeElement as HTMLImageElement;
+      titleEl.style.top = (content.getBoundingClientRect().top - 145) + 'px';
       titleEl.style.display = 'block';
-      fromEvent(this.el.nativeElement, 'scroll').pipe(
-        first()
+      fromEvent<MouseEvent>(this.el.nativeElement, 'scroll', ).pipe(
+        filter((e: Event) => {
+          const top = (e.target as HTMLElement).scrollTop;
+          return top > 100;
+        }),
+        first(),
       ).subscribe(() => {
-        titleEl.classList.add('scrolled');
+        this.scrolledOnce = true;
       });
-      // console.log('LLLL', content);
     });
   }  
 
@@ -147,11 +151,13 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  scrollMore() {
-    // const el = this.el.nativeElement as HTMLElement;
-    // const height = this.el.nativeElement.offsetHeight * 1.25;
+  scrollMore(selector: string) {
+    const el = (this.el.nativeElement as HTMLElement).querySelector(selector) as HTMLElement;
+    el.scrollIntoView({behavior: 'smooth', 'block': 'nearest'});
+    // const height = this.el.nativeElement.offsetHeight * .35;
+    // const height = window.innerHeight * 0.75;
     // console.log('scrollMore', el, height);
     // el.scrollBy({top: height, behavior: 'smooth'});
-    this.slidesContainer.nativeElement.children[this.content.lawsSlideIndex + 1].scrollIntoView({behavior: 'smooth'});
+    // this.slidesContainer.nativeElement.children[this.content.lawsSlideIndex + 1].scrollIntoView({behavior: 'smooth', 'block': 'nearest'});
   }
 }

@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, Input, NgZone, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { delay, tap, timer } from 'rxjs';
+import { LayoutService } from '../layout.service';
 import { IStage } from '../stage/istage';
 import { LayoutUtils } from '../stage/layout-utils';
 import { Country, Highlight, Point, Position, StageData, Step } from '../types';
@@ -49,7 +50,7 @@ export class StagesComponent implements AfterViewInit {
   highlightCountries: Highlight[] = [];
   active = true;
 
-  constructor(private el: ElementRef) {
+  constructor(private el: ElementRef, private layout: LayoutService) {
     this.animator = new Animator();
     this.animator.animationHandlers.push(this.scrollAnimation);
   }
@@ -307,8 +308,9 @@ export class StagesComponent implements AfterViewInit {
       }
       const step_ = this.steps[stepIndex_];
       if (!!position) {
+        const space = this.layout.mobile ? 9.5 : 13;
         const dstX = this.layoutUtils.x(position);
-        const dstY = (stepIndex_ + 1) * this.height - 8*height.height;
+        const dstY = (stepIndex_ + 1) * this.height - space*height.height;
         const active = position.active && step_.name === point.step.name;
         pointAnimation.dstActive = active;
         if ((pointAnimation.dstY < dstY) && !active) {

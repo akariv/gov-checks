@@ -1,6 +1,9 @@
 <img src='../../assets/img/pin-up.svg' class='pin-up' (mouseover)='hover = true' (mouseout)='hover = false'>
 <img [src]='flag' class='flag'/>
-<div class='backdrop' *ngIf='hover'>
+<div class='backdrop' *ngIf='hover' 
+    [style.left]='moveRight + "px"' 
+    [style.visibility]='visible ? "visible" : "hidden"'
+    #backdrop>
     <div class='country-name'>{{country.display}}</div>
     <div class='steps'>
         <div class='step' *ngFor='let step of thisSteps; let i = index' [class.active]='thisStepsActives[i]'>

@@ -1,9 +1,11 @@
-<img class='title' src='assets/img/title.svg' #title/>
+<img class='title' src='assets/img/title.svg' #title [class.hide]='scrolledOnce'/>
 <div class='slides' *ngIf='slides' #slidesContainer>
   <div class='slide' *ngFor='let slide of slides; let i = index' 
       [attr.data-slide-idx]='i' 
       [attr.id]='slide.slug'
-      [class.laws-slide]='i === content.lawsSlideIndex || i === content.lawsSlideIndex + 1 || i === content.lawsSlideIndex2 || i === content.lawsSlideIndex2 + 2'>
+      [class.laws-slide]='i === content.lawsSlideIndex  || i === content.lawsSlideIndex2 || i === content.lawsSlideIndex2 + 2'
+      [class.laws-slide-2]='i === content.lawsSlideIndex+1'
+    >
     <div class='slide-text' [innerHtml]='slide.textHtml'></div>
   </div>
   <div class='mini slide'>
@@ -21,26 +23,28 @@
   <app-stages [countries]='countries' [steps]='steps' #stages></app-stages>
 </ng-container>
 <ng-container *ngIf='bills'>
-  <app-bills [currentSlide]='currentSlide' [bills]='bills' [content]='content' (proceed)='scrollMore()'></app-bills>
+  <app-bills [currentSlide]='currentSlide' [bills]='bills' [content]='content' (proceed)='scrollMore(".laws-slide-2")'></app-bills>
 </ng-container>
-<img class='scroll-on' src='assets/img/scrolldown.svg'/>
-<a class='skip-to-end' href='#outro'></a>
+<img class='scroll-on' src='assets/img/scrolldown.svg' [class.hide]='scrolledOnce' (click)='scrollMore("div[data-slide-idx=\"1\"]")'/>
+<a class='skip-to-end' href='#outro' [class.hide]='scrolledOnce'></a>
 <div class='steps-guide' [class.visible]='currentSlide > content.lawsSlideIndex + 1'>
   <div class='step' *ngFor='let step of steps; let idx = index;' #steptext>
     <a [href]='"#" + step.name' class='step-text' [class.active]='idx === currentStepIndex' [class.disabled]='idx > currentStepIndex'>{{step.display}}</a>
   </div>
 </div>
 
-<div class='footer'>
-  <div class='footer-section' *ngIf='content.methodology'>
-    <h3>מתודולוגיה ונתונים</h3>
-    <div [innerHTML]="md._(content.methodology)"></div>
+<ng-container  *ngIf='scrolledOnce'>
+  <div class='footer'>
+    <div class='footer-section' *ngIf='content.methodology'>
+      <h3>מתודולוגיה ונתונים</h3>
+      <div [innerHTML]="md._(content.methodology)"></div>
+    </div>
+    <div class='footer-section' *ngIf='content.credits'>
+      <h3>קרדיטים</h3>
+      <div [innerHTML]="md._(content.credits)"></div>
+    </div>
   </div>
-  <div class='footer-section' *ngIf='content.credits'>
-    <h3>קרדיטים</h3>
-    <div [innerHTML]="md._(content.credits)"></div>
-  </div>
-</div>
-<div class='berl'>
-  <img src='assets/img/berl.svg'/>
-</div>
+  <div class='berl'>
+    <img src='assets/img/berl.svg'/>
+  </div>  
+</ng-container>

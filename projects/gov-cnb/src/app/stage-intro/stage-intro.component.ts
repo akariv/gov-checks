@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, SimpleChanges } from '@angular/core';
 import { path } from 'd3-path';
 import { select } from 'd3-selection';
-import { animationFrameScheduler, delay, EMPTY, filter, interval, ReplaySubject, switchMap, take, tap, timer } from 'rxjs';
+import { animationFrameScheduler, delay, EMPTY, filter, first, interval, ReplaySubject, switchMap, take, tap, timer } from 'rxjs';
 import { flag_names, flags } from '../flags';
 import { IStage } from '../stage/istage';
 import { LayoutUtils } from '../stage/layout-utils';
@@ -27,7 +27,7 @@ export class StageIntroComponent implements IStage {
 
   revealed = false;
   layoutUtils: LayoutUtils;
-  animateCountry: string[];
+  animateCountry: string[] = [];
   countryPositions: {[key: string]: any} = {};
   selectedCountries: Country[] = [];
   introducedCountries: {[key: string]: boolean} = {};
@@ -41,22 +41,27 @@ export class StageIntroComponent implements IStage {
         this.layoutUtils = new LayoutUtils(this.width, this.height, this.data.active.length);
         this.prepareCountryPositions(data);
       }),
-      switchMap(() => interval(25, animationFrameScheduler)),
-      take(flag_names.length + 1),
+      switchMap(() => interval(10, animationFrameScheduler)),
+      take(flag_names.length + 40),
       tap((i) => {
-        this.animateCountry = flag_names.slice(i, i + 10);
-        this.animateCountry.forEach((cn) => {
-          this.introducedCountries[cn] = true;
-        });
+        const flagName = flag_names[i];
+        if (i % 2 === 0) {
+          if (flagName) {
+            this.animateCountry.push(flagName);
+          }
+          if (i > 20) {
+            this.animateCountry.shift();
+          }
+        }
+        if (flagName) {
+          this.introducedCountries[flagName] = true;
+        }
         this.redraw(this.data);
       }),
+      filter((i) => i === flag_names.length + 39),
       switchMap((i) => {
-        if (this.animateCountry.length === 0) {
-          return this.countrySelections;
-        } else {
-          return EMPTY;
-        }
-      })
+        return this.countrySelections;
+      }),
     ).subscribe((countries) => {
       console.log('SELECTING COUNTRIES', countries);
       this.selectedCountries = countries;
@@ -153,7 +158,8 @@ export class StageIntroComponent implements IStage {
       .attr('r', 2)
       .style('fill', '#cccccc');
 
-    const showFlags = new Set([...this.selectedCountries.map((c) => c.name), ...this.animateCountry]);
+    const selectedFlags = this.selectedCountries.map((c) => c.name);
+    const showFlags = new Set([...selectedFlags, ...this.animateCountry]);
     const flagImages = group.selectAll('.flag')
       .data(flag_names);
     flagImages.enter()
@@ -167,7 +173,7 @@ export class StageIntroComponent implements IStage {
       .attr('width', 20)
       .attr('height', 20);
     flagImages
-      .attr('class', (d: string) => 'flag' + (showFlags.has(d) ? ' show' : ''))
+      .attr('class', (d: string) => 'flag' + (showFlags.has(d) ? (selectedFlags.includes(d) ? ' show' : ' half-show') : ''))
     flagImages.exit().remove();
   }
 
