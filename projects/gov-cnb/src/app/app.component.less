@@ -224,7 +224,10 @@
 
     .scroll-on {
         position: absolute;
-        top: calc(100vh ~'-' 48px);
+        top: calc(100vh ~'-' 24px);
+        .mobile({
+            top: calc(100vh ~'-' 64px);
+        });
         transform: translateY(-100%);
         opacity: 1;
         transition: opacity 2s ease-in-out;
