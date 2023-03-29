@@ -28,7 +28,7 @@ export class LayoutUtils {
       } else if (p.layout === 'outro') {
         const slots = this.slots + 8;
         const skip = (this.width - 2 * this.PADDING) / slots;
-        ret = (p.index + (p.group || 0)) * skip;
+        ret = this.PADDING + (p.index + (p.group || 0)) * skip;
       } else {
         const skip = (this.width - 3 * this.PADDING) / this.slots;
         ret = (!p.active ? 0 : this.PADDING + (p.numInactive || 0) * skip) + this.PADDING + p.index * skip;
