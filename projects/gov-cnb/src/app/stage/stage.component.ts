@@ -127,6 +127,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
             fromEvent(e.currentTarget as SVGElement, 'touchmove').pipe(
               takeUntil(fromEvent(e.currentTarget as SVGElement, 'touchend').pipe(tap(() => {
                 console.log('TOUCHEND');
+                this.hover.emit([{stepName: this.data.name}, ...this.highlighted]);
                 this.lastHovered = null;
               }))),
               tap((e: Event) => {

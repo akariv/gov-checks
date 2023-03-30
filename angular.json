@@ -26,8 +26,14 @@
             "tsConfig": "projects/gov-cnb/tsconfig.app.json",
             "inlineStyleLanguage": "less",
             "assets": [
+              "projects/gov-cnb/src/assets",
+              "projects/gov-cnb/src/android-chrome-192x192.png",
+              "projects/gov-cnb/src/android-chrome-512x512.png",
+              "projects/gov-cnb/src/apple-touch-icon.png",
+              "projects/gov-cnb/src/favicon-16x16.png",
+              "projects/gov-cnb/src/favicon-32x32.png",
               "projects/gov-cnb/src/favicon.ico",
-              "projects/gov-cnb/src/assets"
+              "projects/gov-cnb/src/site.webmanifest"
             ],
             "styles": [
               "projects/gov-cnb/src/styles.less"
@@ -89,8 +95,14 @@
             "tsConfig": "projects/gov-cnb/tsconfig.spec.json",
             "inlineStyleLanguage": "less",
             "assets": [
+              "projects/gov-cnb/src/assets",
+              "projects/gov-cnb/src/android-chrome-192x192.png",
+              "projects/gov-cnb/src/android-chrome-512x512.png",
+              "projects/gov-cnb/src/apple-touch-icon.png",
+              "projects/gov-cnb/src/favicon-16x16.png",
+              "projects/gov-cnb/src/favicon-32x32.png",
               "projects/gov-cnb/src/favicon.ico",
-              "projects/gov-cnb/src/assets"
+              "projects/gov-cnb/src/site.webmanifest"
             ],
             "styles": [
               "projects/gov-cnb/src/styles.less"
