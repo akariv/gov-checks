@@ -41,7 +41,7 @@ export class LayoutUtils {
     let ret = this.height;
     if (p && p.layout === 'intro') {
       if (!p.height) {
-        p.height = Math.random() * (this.height - 2*this.PADDING) + this.PADDING;
+        p.height = Math.random() * (this.height - 2*this.PADDING) / 2  + this.PADDING + this.height / 2;
       }
       ret = p.height;
     }

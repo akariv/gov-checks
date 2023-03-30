@@ -189,6 +189,9 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       hoverable
         .on('mouseover', (e: Event, d: Country) => {
           this.hover.emit([{stepName: this.data.name}, ...this.highlighted, {country: d, stepName: this.data.name, hover: true}]);
+        })
+        .on('mouseout', (e: Event, d: Country) => {
+          this.hover.emit([{stepName: this.data.name}, ...this.highlighted]);
         });
     }
 
@@ -197,13 +200,14 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
     beads.enter()
       .append('ellipse')
       .attr('class', 'bead')
-      .style('stroke', '#cccccc')
-      .style('stroke-width', (d: any) => d.name === 'israel' ? 2 : 1)
-      .style('fill', '#fafafa')
+      .style('stroke', '#fafafa')
+      .style('stroke-width', 1)//(d: any) => d.name === 'israel' ? 2 : 1)
+      .style('fill', '#cccccc')
       .attr('cx', (d: any) => this.x(d.position))
       .attr('cy', this.height)
       .attr('rx', this.layout.desktop ? 4 : 2)
-      .attr('ry', this.layout.desktop ? 6 : 4);
+      .attr('ry', this.layout.desktop ? 4 : 2);
+      // .attr('ry', this.layout.desktop ? 6 : 4);
   }
 
   ngOnChanges(changes: SimpleChanges): void {

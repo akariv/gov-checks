@@ -259,7 +259,7 @@ export class StagesComponent implements AfterViewInit {
     this.currentStage = this.stageComponents[stepIndex];
     obs = obs.pipe(tap(() => {
       if (this.currentStage === this.stageComponents[stepIndex]) {
-        const scrollTop = this.height * (stepIndex + (stepIndex > 0 ? 0.5 : 0));
+        const scrollTop = this.height * (stepIndex + (stepIndex > 0 ? 0.35 : 0));
         if (this.scrollAnimation.dst !== scrollTop) {
           this.scrollAnimation.src = -this.scrollAnimation.scrollTop;
           this.scrollAnimation.dst = scrollTop;
