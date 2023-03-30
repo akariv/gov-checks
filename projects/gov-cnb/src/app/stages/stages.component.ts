@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Input, NgZone, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { delay, tap, timer } from 'rxjs';
+import { delay, interval, map, Observable, switchMap, take, tap, timer } from 'rxjs';
 import { LayoutService } from '../layout.service';
 import { IStage } from '../stage/istage';
 import { LayoutUtils } from '../stage/layout-utils';
@@ -244,7 +244,7 @@ export class StagesComponent implements AfterViewInit {
 
   goto(step: Step) {
     let stepIndex = this.steps.findIndex(s => s === step);
-    let obs = timer(0);
+    let obs: Observable<any> = timer(0);
     if (stepIndex === 1 && this.firstTime) {
       this.firstTime = false;
       this.introStage.reveal();
@@ -253,10 +253,11 @@ export class StagesComponent implements AfterViewInit {
       });
       obs = timer(REVEAL_ANIMATION_DURATION * 0.5);
     }
+    const currentStep = this.currentStep;
     this.currentStep = step;
     this.currentStepIndex = stepIndex;
     this.currentStage = this.stageComponents[stepIndex];
-    obs.subscribe(() => {
+    obs = obs.pipe(tap(() => {
       if (this.currentStage === this.stageComponents[stepIndex]) {
         const scrollTop = this.height * (stepIndex + (stepIndex > 0 ? 0.5 : 0));
         if (this.scrollAnimation.dst !== scrollTop) {
@@ -268,11 +269,26 @@ export class StagesComponent implements AfterViewInit {
         this.movePoints(stepIndex);
         this.animator.requestAnimation();  
       }
-    });  
+    }));
+    if (currentStep !== step && step.name === 'outro') {
+      const outroStage = this.currentStage;
+      const outroStageData: StageData = this.stages[stepIndex - 1];
+      console.log('OUTRO ANIMATION', outroStageData);
+      obs = obs.pipe(
+        delay(5000),
+        switchMap(() => interval(50)),
+        take(outroStageData.active.length),
+        map((i: number) => outroStageData.active.length - i - 1),
+        tap((i) => {
+          outroStage.selectCountries(outroStageData.active.slice(i, i + 1), false);
+        })
+      );
+    }
+    obs.subscribe();
   }
 
   highlight(countries: Country[]) {
-    this.currentStage?.selectCountries(countries);
+    this.currentStage?.selectCountries(countries, true);
   }
 
   movePoints(stepIndex: number) {

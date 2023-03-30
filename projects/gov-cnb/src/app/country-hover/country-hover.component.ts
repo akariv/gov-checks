@@ -8,7 +8,8 @@ import { Country, Step } from '../types';
   templateUrl: './country-hover.component.html',
   styleUrls: ['./country-hover.component.less'],
   host: {
-    '[class.hover]': 'hover'
+    '[class.hover]': 'hover',
+    '[class.animated]': 'animated'
   }
 })
 export class CountryHoverComponent implements OnChanges{
@@ -17,6 +18,7 @@ export class CountryHoverComponent implements OnChanges{
   @Input() steps: Step[];
   @Input() currentStepIndex: number;
   @Input() hover = false;
+  @Input() animated = true;
 
   @ViewChild('backdrop') backdrop: ElementRef<HTMLDivElement>;
 

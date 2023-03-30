@@ -235,9 +235,9 @@
 
     .scroll-on {
         position: fixed;
-        top: 75vh;
+        top: calc(100vh ~'-' 32px);
         .mobile({
-            top: calc(75vh);
+            top: 85vh;
         });
         transform: translateY(-100%);
         opacity: 1;
@@ -248,8 +248,11 @@
     }
     .skip-to-end {
         position: fixed;
-        top: 75vh;
-        left: 24px;
+        top: calc(100vh ~'-' 32px);
+        .mobile({
+            top: 85vh;
+        });
+        left: 32px;
         transform: translateY(-100%);
         width: 80px;
         height: 60px;

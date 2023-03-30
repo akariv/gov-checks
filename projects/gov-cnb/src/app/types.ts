@@ -54,6 +54,7 @@ export type Highlight = {
   country?: Country;
   x?: number;
   hover?: boolean;
+  animated?: boolean;
 };
 
 export class Point {

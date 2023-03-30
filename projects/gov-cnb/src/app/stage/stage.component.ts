@@ -220,7 +220,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
     }
   }
   
-  selectCountries(countries: Country[]) {
+  selectCountries(countries: Country[], animated: boolean) {
     console.log('SELECT COUNTRIES', this.data.name, countries);
     this.highlighted = [];
     [this.data.active, this.data.inactive].forEach(lists => {
@@ -241,7 +241,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
           c.position.selectedNum = selectedNum;
         }
         if (c.selected) {
-          this.highlighted.push({country: c, stepName: this.data.name});
+          this.highlighted.push({country: c, stepName: this.data.name, animated});
         }
       });
     });
