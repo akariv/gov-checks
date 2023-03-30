@@ -12,7 +12,10 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.less']
+  styleUrls: ['./app.component.less'],
+  host: {
+    '[class.active]': 'active'
+  }
 })
 export class AppComponent implements AfterViewInit {
 
@@ -39,6 +42,7 @@ export class AppComponent implements AfterViewInit {
   whatsappShare: SafeUrl;
   scrolledOnce = false;
   shareData: { text: any; url: string; };
+  active = true;
 
   constructor(private data: DataService, private el: ElementRef, public md: MarkdownService, private sanitizer: DomSanitizer) {
     // Marked.js options
@@ -110,8 +114,14 @@ export class AppComponent implements AfterViewInit {
           return top > 100;
         }),
         first(),
+        tap(() => {
+          this.scrolledOnce = true;
+        }),
+        delay(100)
       ).subscribe(() => {
-        this.scrolledOnce = true;
+        this.el.nativeElement.querySelectorAll('.footer').forEach((el: HTMLElement) => {
+          this.activeObserver.observe(el);
+        });    
       });
     });
   }  
@@ -141,11 +151,9 @@ export class AppComponent implements AfterViewInit {
     });
     this.activeObserver = new IntersectionObserver((entries) => {
       console.log('active', entries)
-      this.stages.setActive(!entries[0].isIntersecting);
+      this.active = !entries[0].isIntersecting;
+      this.stages.setActive(this.active);
     }, {threshold: 0});
-    this.el.nativeElement.querySelectorAll('.footer').forEach((el: HTMLElement) => {
-      this.activeObserver.observe(el);
-    });
   }
 
   highlightStepText() {
@@ -163,11 +171,6 @@ export class AppComponent implements AfterViewInit {
   scrollMore(selector: string) {
     const el = (this.el.nativeElement as HTMLElement).querySelector(selector) as HTMLElement;
     el.scrollIntoView({behavior: 'smooth', 'block': 'nearest'});
-    // const height = this.el.nativeElement.offsetHeight * .35;
-    // const height = window.innerHeight * 0.75;
-    // console.log('scrollMore', el, height);
-    // el.scrollBy({top: height, behavior: 'smooth'});
-    // this.slidesContainer.nativeElement.children[this.content.lawsSlideIndex + 1].scrollIntoView({behavior: 'smooth', 'block': 'nearest'});
   }
 
   async mobileShare() {

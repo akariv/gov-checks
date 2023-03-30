@@ -10,6 +10,10 @@
     position: relative;
     .overflow-scroll;
     background-color: @bg;
+    &.active {
+        scroll-snap-type: y mandatory;
+        scroll-snap-stop: always;    
+    }
     
     app-stages {
         position: sticky;
@@ -22,15 +26,6 @@
         // transform: translateX(-50%);
         pointer-events: none;
         z-index: 2;
-    }
-
-    app-bills {
-        position: fixed;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        height: 100vh;
-        width: 100%;
     }
 
     .title {
@@ -86,22 +81,26 @@
         margin-bottom: 20vh;
 
         .slide {
+            scroll-snap-align: start;
             width: 100%;
             max-width: 640px;
-            flex: 0 0 66vh;
-            &.header-slide {
-                flex: 0 0 100vh;
-                padding-top: 34vh;
-            }
-            &.intro-slide {
-                flex: 0 0 100vh;
-            }
+            flex: 0 0 100vh;
+            padding-top: 20vh;
             display: flex;
             flex-flow: column;
-            justify-content: center;
+            // justify-content: center;
+            justify-content: flex-start;
             align-items: center;
             text-align: right;
-            text-shadow: 0 4px 3px #fafafa, 0 -4px 3px #fafafa, 4px 0 3px #fafafa, -4px 0 3px #fafafa;
+            text-shadow:
+                    0 4px 2px #fafafa,
+                    0 -4px 2px #fafafa,
+                    4px 0 2px #fafafa,
+                    -4px 0 2px #fafafa,
+                    0 4px 6px #fafafa,
+                    0 -4px 6px #fafafa,
+                    4px 0 6px #fafafa,
+                    -4px 0 6px #fafafa;
 
             .slide-text {
                 .font;
@@ -161,15 +160,27 @@
             }
 
             &.laws-slide {
+                // padding-top: 0;
                 justify-content: flex-start;
-                flex: 0 0 100vh;
+                // flex: 0 0 100vh;
             }
-            &.laws-slide-2 {
-                flex: 1 0 40vh;
+            // &.header-slide {
+            //     // flex: 0 0 100vh;
+            //     // padding-top: 34vh;
+            // }
+            &.intro-slide {
+                // flex: 0 0 100vh;
+                padding-top: 0;
+                justify-content: center;
             }
+            // &.laws-slide-2 {
+            //     // flex: 1 0 40vh;
+            // }
             &.mini {
                 text-align: center;
+                scroll-snap-align: center;
                 flex: 0 0 25vh;
+                padding-top: 0;
                 .share {
                     margin-top: 40px;
                     display: flex;
@@ -223,7 +234,7 @@
     }
 
     .scroll-on {
-        position: absolute;
+        position: fixed;
         top: calc(100vh ~'-' 24px);
         .mobile({
             top: calc(100vh ~'-' 64px);
@@ -236,7 +247,7 @@
         }
     }
     .skip-to-end {
-        position: absolute;
+        position: fixed;
         top: calc(100vh ~'-' 48px);
         left: 24px;
         transform: translateY(-100%);
@@ -318,6 +329,7 @@
     }
 
     .footer {
+        scroll-snap-align: start;
         padding: 80px 16px;
         display: flex;
         flex-flow: row wrap;

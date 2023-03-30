@@ -9,6 +9,9 @@
       [class.laws-slide-2]='i === content.lawsSlideIndex+1'
     >
     <div class='slide-text' [innerHtml]='slide.textHtml'></div>
+    <ng-container *ngIf='bills && (i === content.lawsSlideIndex || i === content.lawsSlideIndex2)'>
+      <app-bills [currentSlide]='currentSlide' [bills]='bills' [targetSlide]='i'></app-bills>
+    </ng-container>
   </div>
   <div class='mini slide'>
     <div class='slide-text'>
@@ -23,10 +26,7 @@
   </div>
 </div>
 <ng-container *ngIf='countries && steps'>
-  <app-stages [countries]='countries' [steps]='steps' #stages></app-stages>
-</ng-container>
-<ng-container *ngIf='bills'>
-  <app-bills [currentSlide]='currentSlide' [bills]='bills' [content]='content' (proceed)='scrollMore(".laws-slide-2")'></app-bills>
+  <app-stages [countries]='countries' [steps]='steps' [active]='active' #stages></app-stages>
 </ng-container>
 <img class='scroll-on layout-desktop' src='assets/img/scrolldown.svg' [class.hide]='scrolledOnce' (click)='scrollMore("div[data-slide-idx=\"1\"]")'/>
 <img class='scroll-on layout-mobile' src='assets/img/scrolldown-mobile.svg' [class.hide]='scrolledOnce' (click)='scrollMore("div[data-slide-idx=\"1\"]")'/>
@@ -37,7 +37,7 @@
   </div>
 </div>
 
-<div [style.visibility]='scrolledOnce ? "visible" : "hidden"'>
+<div *ngIf='scrolledOnce'>
   <div class='footer' data-slide-idx='-1'>
     <div class='footer-section' *ngIf='content.methodology'>
       <h3>מתודולוגיה ונתונים</h3>

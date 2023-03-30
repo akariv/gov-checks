@@ -10,9 +10,6 @@ import { AnimationHandler, Animator, PointAnimationHandler, POINT_ANIMATION_DURA
   selector: 'app-stages',
   templateUrl: './stages.component.html',
   styleUrls: ['./stages.component.less'],
-  host: {
-    '[class.hover]': 'hovering()',
-  }
 })
 export class StagesComponent implements AfterViewInit {
 
@@ -20,6 +17,7 @@ export class StagesComponent implements AfterViewInit {
 
   @Input() countries: Country[];
   @Input() steps: Step[];
+  @Input() active = true;
 
   @ViewChild('intro') introStage: IStage;
   @ViewChildren('stage') simpleStages: QueryList<IStage>;
@@ -51,7 +49,6 @@ export class StagesComponent implements AfterViewInit {
   firstTime = true;
   lastMovePoints = -1;
   highlightCountries: Highlight[] = [];
-  active = true;
 
   constructor(private el: ElementRef, private layout: LayoutService) {
     this.animator = new Animator();
@@ -243,15 +240,6 @@ export class StagesComponent implements AfterViewInit {
   setActive(value: boolean) {
     console.log('set active', value);
     this.active = value;
-  }
-
-  hovering(): boolean {
-    for (const highlight of this.highlightCountries) {
-      if (!!highlight?.hover) {
-        return true;
-      }
-    }
-    return false;
   }
 
   goto(step: Step) {

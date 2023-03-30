@@ -11,7 +11,10 @@
     .pin-up {
         pointer-events: all;
         margin-right: 16px;
-        // animation: appear 250ms ease-out both;
+        animation: appear 250ms ease-out both;
+        &.blink {
+            .blink;
+        }
     }
 
     .flag {
@@ -21,13 +24,17 @@
         top: -32px;
         margin-bottom: -20px;
         right: 17px;
-        // animation: appear 250ms ease-out both;
+        animation: appear 250ms ease-out both;
+        &.blink {
+            .blink;
+        }
     }
 
     .backdrop {
         background: rgba(250, 250, 250, 0.5);
         backdrop-filter: blur(16px);
         position: relative;
+        padding-left: 8px;
 
         .country-name {
             .font;
@@ -83,13 +90,13 @@
     }
 }
 
-// @keyframes appear {
-//     0% {
-//         transform: translateY(8px);
-//         opacity: 0;
-//     }
-//     100% {
-//         transform: translateX(0);
-//         opacity: 1;
-//     }
-// }
+@keyframes appear {
+    0% {
+        transform: translateY(8px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}

@@ -42,12 +42,14 @@ export class CountryHoverComponent implements OnChanges{
     });
     this.moveRight = 0;
     this.visible = false;
-    timer(1).subscribe(() => {
-      const left = this.backdrop.nativeElement.getBoundingClientRect().left;
-      if (left < 16) {
-        this.moveRight = 16-left;
-      }
-      this.visible = true;
-    });
+    if (this.hover) {
+      timer(1).subscribe(() => {
+        const left = this.backdrop.nativeElement.getBoundingClientRect().left;
+        if (left < 16) {
+          this.moveRight = 16-left;
+        }
+        this.visible = true;
+      });  
+    }
   }
 }

@@ -6,6 +6,7 @@ import { path } from 'd3-path';
 import { LayoutUtils } from './layout-utils';
 import { IStage } from './istage';
 import { REVEAL_ANIMATION_DURATION } from '../stages/animations';
+import { LayoutService } from '../layout.service';
 
 @Component({
   selector: 'app-stage',
@@ -30,7 +31,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
   revealed = false;
   layoutUtils: LayoutUtils;
 
-  constructor(public el: ElementRef) {
+  constructor(public el: ElementRef, private layout: LayoutService) {
     this.ready.pipe(
       switchMap(() => this.params),
       filter((data) => !!data),
@@ -68,7 +69,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
     if (!this.svg) {
       this.svg = select(this.el.nativeElement).append('svg')
         .attr('width', this.width)
-        .attr('height', this.height);
+        .attr('height', this.height + 10);
       const defs = this.svg.append('defs');
       const fadeGrad = defs.append('linearGradient')
         .attr('id', 'fadeGrad' + data.name)
@@ -91,6 +92,19 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
         .append('g');
     }
     const group = this.svg;
+
+    const beads = group.selectAll('.bead')
+      .data([...data.active, ...data.inactive], (d: any) => (d as Country).name);
+    beads.enter()
+      .append('ellipse')
+      .attr('class', 'bead')
+      .style('stroke', '#cccccc')
+      .style('stroke-width', (d: any) => d.name === 'israel' ? 2 : 1)
+      .style('fill', 'none')
+      .attr('cx', (d: any) => this.x(d.position))
+      .attr('cy', this.height)
+      .attr('rx', this.layout.desktop ? 4 : 2.5)
+      .attr('ry', this.layout.desktop ? 6 : 4);
 
     const active = group.selectAll('.path.active')
       .data(data.active, (d: any) => (d as Country).name);
@@ -125,6 +139,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
     timer(1).subscribe(() => {
       inactive.style('transition', (d: Country) => `stroke-dashoffset ${REVEAL_ANIMATION_DURATION}ms linear`);
     });
+
     const hoverable = group.selectAll('.path.hoverable')
       .data([...data.active, ...data.inactive], (d: any) => (d as Country).name);
     hoverable.enter()
