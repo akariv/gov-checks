@@ -177,57 +177,71 @@
             // &.laws-slide-2 {
             //     // flex: 1 0 40vh;
             // }
-            &.mini {
-                text-align: center;
-                scroll-snap-align: center;
-                flex: 0 0 40vh;
-                padding-top: 0;
-                .share {
-                    margin-top: 40px;
-                    display: flex;
-                    flex-flow: row;
-                    justify-content: center;
-                    align-items: center;
-                    gap: 12px;
+        }
+    }
 
-                    a {
-                        width: 42px;
-                        height: 42px;
-                        border-radius: 50%;
-                        background-repeat: no-repeat;
-                        background-position: center;
-                        background-size: contain;
-                        text-decoration: none;
-                        cursor: pointer;
-                        pointer-events: all;
+    .share-cta {
+        text-align: center;
+        scroll-snap-align: center;
+        flex: 0 0 30vh;
+        padding-top: 0;
 
-                        &.facebook {
-                            background-image: url(../assets/img/icon-facebook.svg);
-                            &:hover {
-                                background-image: url(../assets/img/icon-facebook-hover.svg);
-                            }
-                        }
+        .font;
+        font-weight: 400;
+        font-size: 28px;
+        line-height: 32px;
+        .mobile({
+            font-size: 20px;
+            line-height: 22px;
+        });
+        color: @blue;
+        position: relative;
+        padding: 8px;
 
-                        &.twitter {
-                            background-image: url(../assets/img/icon-twitter.svg);
-                            &:hover {
-                                background-image: url(../assets/img/icon-twitter-hover.svg);
-                            }
-                        }
+        .share {
+            margin-top: 40px;
+            display: flex;
+            flex-flow: row;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
 
-                        &.whatsapp {
-                            background-image: url(../assets/img/icon-whatsapp.svg);
-                            &:hover {
-                                background-image: url(../assets/img/icon-whatsapp-hover.svg);
-                            }
-                        }
+            a {
+                width: 42px;
+                height: 42px;
+                border-radius: 50%;
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: contain;
+                text-decoration: none;
+                cursor: pointer;
+                pointer-events: all;
 
-                        &.mobile-share {
-                            background-image: url(../assets/img/icon-share.svg);
-                            &:hover {
-                                background-image: url(../assets/img/icon-share-hover.svg);
-                            }
-                        }
+                &.facebook {
+                    background-image: url(../assets/img/icon-facebook.svg);
+                    &:hover {
+                        background-image: url(../assets/img/icon-facebook-hover.svg);
+                    }
+                }
+
+                &.twitter {
+                    background-image: url(../assets/img/icon-twitter.svg);
+                    &:hover {
+                        background-image: url(../assets/img/icon-twitter-hover.svg);
+                    }
+                }
+
+                &.whatsapp {
+                    background-image: url(../assets/img/icon-whatsapp.svg);
+                    &:hover {
+                        background-image: url(../assets/img/icon-whatsapp-hover.svg);
+                    }
+                }
+
+                &.mobile-share {
+                    background-image: url(../assets/img/icon-share.svg);
+                    &:hover {
+                        background-image: url(../assets/img/icon-share-hover.svg);
                     }
                 }
             }

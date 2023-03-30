@@ -43,6 +43,7 @@ export class AppComponent implements AfterViewInit {
   scrolledOnce = false;
   shareData: { text: any; url: string; };
   active = true;
+  activeCount: number = 0;
 
   constructor(private data: DataService, private el: ElementRef, public md: MarkdownService, private sanitizer: DomSanitizer) {
     // Marked.js options
@@ -108,23 +109,29 @@ export class AppComponent implements AfterViewInit {
       const titleEl = this.titleImg.nativeElement as HTMLImageElement;
       titleEl.style.top = (content.getBoundingClientRect().top - 145) + 'px';
       titleEl.style.display = 'block';
-      fromEvent<MouseEvent>(this.el.nativeElement, 'scroll', ).pipe(
-        filter((e: Event) => {
-          const top = (e.target as HTMLElement).scrollTop;
-          return top > 100;
-        }),
-        first(),
-        tap(() => {
-          this.scrolledOnce = true;
-        }),
-        delay(100)
-      ).subscribe(() => {
-        this.el.nativeElement.querySelectorAll('.share').forEach((el: HTMLElement) => {
-          this.activeObserver.observe(el);
-        });    
-      });
+      this.resetScrolledOnce();
     });
   }  
+
+  resetScrolledOnce() {
+    this.scrolledOnce = false;
+    fromEvent<MouseEvent>(this.el.nativeElement, 'scroll', ).pipe(
+      filter((e: Event) => {
+        const top = (e.target as HTMLElement).scrollTop;
+        return top > 100;
+      }),
+      first(),
+      tap(() => {
+        this.scrolledOnce = true;
+      }),
+      delay(100)
+    ).subscribe(() => {
+      this.el.nativeElement.querySelectorAll('.share, .footer').forEach((el: HTMLElement) => {
+        console.log('active observer', el);
+        this.activeObserver.observe(el);
+      });    
+    });
+  }
 
   setupObserver() {
     this.observer = new IntersectionObserver((entries) => {
@@ -151,7 +158,17 @@ export class AppComponent implements AfterViewInit {
     });
     this.activeObserver = new IntersectionObserver((entries) => {
       console.log('active', entries)
-      this.active = !entries[0].isIntersecting;
+      entries.forEach((e) => {
+        console.log('active', e);
+        if (e.isIntersecting) {
+          this.activeCount += 1;
+        } else {
+          this.activeCount -= 1;
+        }
+      });
+      if (this.activeCount < 0) this.activeCount = 0;
+      this.active = this.activeCount === 0;
+      console.log('active', this.activeCount, this.active);
       this.stages.setActive(this.active);
     }, {threshold: 0});
   }

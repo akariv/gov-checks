@@ -351,7 +351,7 @@ export class StagesComponent implements AfterViewInit {
 
   hoverPosition(event: Highlight[]) {
     const stepName = event[0].stepName || '';
-    if (stepName === this.currentStep?.name) {
+    if (stepName === this.currentStep?.name && this.active) {
       if (!event || event.length === 0) {
         this.highlightCountries = [];
       } else {  
