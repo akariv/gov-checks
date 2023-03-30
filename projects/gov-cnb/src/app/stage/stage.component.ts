@@ -92,6 +92,10 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
         .append('g');
     }
     this.svg
+      .on('touchmove', () => {
+        console.log('TOUCHMOVE');
+        this.hover.emit([{stepName: this.data.name}, ...this.highlighted]);
+      })
       .on('touchend', () => {
         console.log('TOUCHEND');
         this.hover.emit([{stepName: this.data.name}, ...this.highlighted]);
@@ -142,11 +146,20 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       .style('stroke', '#ffffff00')
       .style('stroke-width', 8)
       .style('fill', 'none')
-      .attr('d', (d: any) => this.pathGenerator(d))
-      .on('mouseover', (_: Event, d: Country) => this.hover.emit([{stepName: this.data.name}, ...this.highlighted, {country: d, stepName: this.data.name, hover: true}]))
-      .on('touchmove', (_: Event, d: Country) => this.hover.emit([{stepName: this.data.name}, ...this.highlighted, {country: d, stepName: this.data.name, hover: true}]))
-      .on('mouseout', () => this.hover.emit([{stepName: this.data.name}, ...this.highlighted]))
-    ;
+      .attr('d', (d: any) => this.pathGenerator(d));
+    if (this.layout.mobile) {
+      hoverable
+        .on('touchmove', (e: Event, d: Country) => {
+          e.preventDefault();
+          this.hover.emit([{stepName: this.data.name}, ...this.highlighted, {country: d, stepName: this.data.name, hover: true}]);
+        });  
+    } else {
+      hoverable
+        .on('mouseover', (e: Event, d: Country) => {
+          e.preventDefault();
+          this.hover.emit([{stepName: this.data.name}, ...this.highlighted, {country: d, stepName: this.data.name, hover: true}]);
+        });
+    }
 
     const beads = group.selectAll('.bead')
       .data([...data.active, ...data.inactive], (d: any) => (d as Country).name);
