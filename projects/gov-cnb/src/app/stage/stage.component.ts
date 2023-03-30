@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { delay, filter, ReplaySubject, switchMap, tap, timer } from 'rxjs';
+import { delay, filter, fromEvent, ReplaySubject, switchMap, takeUntil, tap, timer } from 'rxjs';
 import { Country, Highlight, Position, StageData } from '../types';
 import { select } from 'd3-selection';
 import { path } from 'd3-path';
@@ -64,6 +64,29 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
     return this.layoutUtils.x(p);
   }
 
+  handleTouch(e: TouchEvent) {
+    const x = e.touches[0].clientX - this.el.nativeElement.getBoundingClientRect().left;
+    const y = e.touches[0].clientY - this.el.nativeElement.getBoundingClientRect().top;
+    // console.log('TOUCH0', y, this.height);
+    if (y > this.height - 50) {
+      let minDist = 1000;
+      let minCountry: Country | undefined;
+      this.data.active.forEach((c) => {
+        const dist = Math.abs(this.x(c.position) - x);
+        if (dist < minDist) {
+          minDist = dist;
+          minCountry = c;
+        }
+      });
+      // console.log('TOUCH1', minCountry?.name, minDist, y, this.height);
+      if (minCountry && minDist < 10) {
+        this.hover.emit([{stepName: this.data.name}, ...this.highlighted, {country: minCountry, stepName: this.data.name, hover: true}]);
+        return true;
+      }
+    }
+    return false;
+  }
+
   redraw(data: StageData) {
     // console.log('REDRAW', data);
     if (!this.svg) {
@@ -91,15 +114,21 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       this.svg = this.svg
         .append('g');
     }
-    this.svg
-      .on('touchmove', () => {
-        console.log('TOUCHMOVE');
-        this.hover.emit([{stepName: this.data.name}, ...this.highlighted]);
-      })
-      .on('touchend', () => {
-        console.log('TOUCHEND');
-        this.hover.emit([{stepName: this.data.name}, ...this.highlighted]);
-      });
+    if (this.layout.mobile) {
+      this.svg
+        .on('touchstart', (e: TouchEvent) => {
+          if (this.handleTouch(e)) {
+            // console.log('TOUCHSTART');
+            fromEvent(e.currentTarget as SVGElement, 'touchmove').pipe(
+              takeUntil(fromEvent(e.currentTarget as SVGElement, 'touchend').pipe(tap(() => {console.log('TOUCHEND');}))),
+              tap((e: Event) => {
+                // console.log('TOUCHMOVE');
+                this.handleTouch(e as TouchEvent);
+              }),
+            ).subscribe();  
+          }
+        });
+    }
     const group = this.svg;
 
     const active = group.selectAll('.path.active')
@@ -147,16 +176,9 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       .style('stroke-width', 8)
       .style('fill', 'none')
       .attr('d', (d: any) => this.pathGenerator(d));
-    if (this.layout.mobile) {
-      hoverable
-        .on('touchmove', (e: Event, d: Country) => {
-          e.preventDefault();
-          this.hover.emit([{stepName: this.data.name}, ...this.highlighted, {country: d, stepName: this.data.name, hover: true}]);
-        });  
-    } else {
+    if (!this.layout.mobile) {
       hoverable
         .on('mouseover', (e: Event, d: Country) => {
-          e.preventDefault();
           this.hover.emit([{stepName: this.data.name}, ...this.highlighted, {country: d, stepName: this.data.name, hover: true}]);
         });
     }
