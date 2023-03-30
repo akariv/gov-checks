@@ -49,6 +49,7 @@ export class StagesComponent implements AfterViewInit {
   firstTime = true;
   lastMovePoints = -1;
   highlightCountries: Highlight[] = [];
+  lastSlide = false;
 
   constructor(private el: ElementRef, private layout: LayoutService) {
     this.animator = new Animator();
@@ -327,7 +328,7 @@ export class StagesComponent implements AfterViewInit {
         const space = this.layout.mobile ? 9.5 : 13;
         const dstX = this.layoutUtils.x(position);
         const dstY = (stepIndex_ + 1) * this.height - space*height.height;
-        const active = position.active && (step_.name === point.step.name || (step_.name === 'outro' && point.step.name === 'constitution'));
+        const active = position.active && (step_.name === point.step.name);
         pointAnimation.dstActive = active;
         if ((pointAnimation.dstY < dstY) && !active) {
           pointAnimation.srcX = pointAnimation.dstX;
@@ -349,6 +350,10 @@ export class StagesComponent implements AfterViewInit {
     });
   }
 
+  setLastSlide(value: boolean) {
+    this.lastSlide = value;
+  }
+
   hoverPosition(event: Highlight[]) {
     const stepName = event[0].stepName || '';
     if (stepName === this.currentStep?.name && this.active) {
@@ -356,7 +361,7 @@ export class StagesComponent implements AfterViewInit {
         this.highlightCountries = [];
       } else {  
         const stageLeft = this.simpleStages.get(0)?.el.nativeElement.getBoundingClientRect().left || 0;
-        this.highlightCountries = event;
+        this.highlightCountries = event.slice(1);
         this.highlightCountries.forEach((h) => {
           if (h.country) {
             h.x = stageLeft + this.layoutUtils.x(h.country.position);
@@ -366,7 +371,8 @@ export class StagesComponent implements AfterViewInit {
       const countryNames = this.highlightCountries.map((h) => h.country?.name || '') || [];
       const hoverNames = this.highlightCountries.filter((h) => h.hover).map((h) => h.country?.name || '') || [];
       this.pointAnimations.forEach((anim) => {
-        const active = anim.dstActive || hoverNames.indexOf(anim.point.country.name) >= 0;
+        const lastSlide =  this.lastSlide && anim.point.step.name === 'constitution';
+        const active = anim.dstActive || hoverNames.indexOf(anim.point.country.name) >= 0 || lastSlide;
         const highlight = anim.dstActive && countryNames.indexOf(anim.point.country.name) >= 0;
         anim.point.updateActive(active, highlight);
       });

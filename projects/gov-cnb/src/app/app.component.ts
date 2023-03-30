@@ -148,6 +148,7 @@ export class AppComponent implements AfterViewInit {
             this.currentStepIndex = this.steps.indexOf(step);
             this.highlightStepText();
             this.stages.goto(step);
+            this.stages.setLastSlide(slideIdx === this.slides.length - 1);
             this.stages.highlight(slide.highlight_country);
           }
         }
