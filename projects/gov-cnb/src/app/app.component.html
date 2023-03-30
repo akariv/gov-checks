@@ -1,4 +1,4 @@
-<div class='title' src='assets/img/title.svg' #title [class.small]='scrolledOnce' [class.hide]='currentSlide > 0'></div>
+<a class='title' src='assets/img/title.svg' #title [class.small]='scrolledOnce' [class.hide]='currentSlide > 0' href="#intro"></a>
 <div class='slides' *ngIf='slides' #slidesContainer>
   <div class='slide' *ngFor='let slide of slides; let i = index' 
       [attr.data-slide-idx]='i' 

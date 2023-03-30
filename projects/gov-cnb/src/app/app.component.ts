@@ -119,7 +119,7 @@ export class AppComponent implements AfterViewInit {
         }),
         delay(100)
       ).subscribe(() => {
-        this.el.nativeElement.querySelectorAll('.footer').forEach((el: HTMLElement) => {
+        this.el.nativeElement.querySelectorAll('.share').forEach((el: HTMLElement) => {
           this.activeObserver.observe(el);
         });    
       });
