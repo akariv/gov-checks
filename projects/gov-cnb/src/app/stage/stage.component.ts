@@ -30,6 +30,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
 
   revealed = false;
   layoutUtils: LayoutUtils;
+  lastHovered: string | null = null;
 
   constructor(public el: ElementRef, private layout: LayoutService) {
     this.ready.pipe(
@@ -71,7 +72,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
     if (y > this.height - 50) {
       let minDist = 1000;
       let minCountry: Country | undefined;
-      this.data.active.forEach((c) => {
+      [...this.data.inactive, ...this.data.active].forEach((c) => {
         const dist = Math.abs(this.x(c.position) - x);
         if (dist < minDist) {
           minDist = dist;
@@ -80,7 +81,10 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       });
       // console.log('TOUCH1', minCountry?.name, minDist, y, this.height);
       if (minCountry && minDist < 10) {
-        this.hover.emit([{stepName: this.data.name}, ...this.highlighted, {country: minCountry, stepName: this.data.name, hover: true}]);
+        if (this.lastHovered !== minCountry.name) {
+          this.lastHovered = minCountry.name;
+          this.hover.emit([{stepName: this.data.name}, ...this.highlighted, {country: minCountry, stepName: this.data.name, hover: true}]);
+        }
         return true;
       }
     }
@@ -117,10 +121,14 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
     if (this.layout.mobile) {
       this.svg
         .on('touchstart', (e: TouchEvent) => {
+          this.lastHovered = null;
           if (this.handleTouch(e)) {
             // console.log('TOUCHSTART');
             fromEvent(e.currentTarget as SVGElement, 'touchmove').pipe(
-              takeUntil(fromEvent(e.currentTarget as SVGElement, 'touchend').pipe(tap(() => {console.log('TOUCHEND');}))),
+              takeUntil(fromEvent(e.currentTarget as SVGElement, 'touchend').pipe(tap(() => {
+                console.log('TOUCHEND');
+                this.lastHovered = null;
+              }))),
               tap((e: Event) => {
                 // console.log('TOUCHMOVE');
                 this.handleTouch(e as TouchEvent);
