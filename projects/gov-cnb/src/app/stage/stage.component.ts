@@ -91,20 +91,12 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       this.svg = this.svg
         .append('g');
     }
+    this.svg
+      .on('touchend', () => {
+        console.log('TOUCHEND');
+        this.hover.emit([{stepName: this.data.name}, ...this.highlighted]);
+      });
     const group = this.svg;
-
-    const beads = group.selectAll('.bead')
-      .data([...data.active, ...data.inactive], (d: any) => (d as Country).name);
-    beads.enter()
-      .append('ellipse')
-      .attr('class', 'bead')
-      .style('stroke', '#cccccc')
-      .style('stroke-width', (d: any) => d.name === 'israel' ? 2 : 1)
-      .style('fill', 'none')
-      .attr('cx', (d: any) => this.x(d.position))
-      .attr('cy', this.height)
-      .attr('rx', this.layout.desktop ? 4 : 2.5)
-      .attr('ry', this.layout.desktop ? 6 : 4);
 
     const active = group.selectAll('.path.active')
       .data(data.active, (d: any) => (d as Country).name);
@@ -114,7 +106,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
     active.exit().remove();
     active
       .style('stroke', (d: any) => d.selected ? `url(#fadeGrad${data.name})` : '#cccccc')
-      .style('stroke-width', (d: any) => d.name === 'israel' ? 2 : 1)
+      .style('stroke-width', (d: any) => d.name === 'israel' ? 2 : (this.layout.mobile ? 0.5 : 1))
       .style('fill', 'none')
       .attr('d', (d: any) => this.pathGenerator(d))
       .style('stroke-dasharray', (d: any, i: number, nodes: Element[]) => (nodes[i] as SVGPathElement).getTotalLength())
@@ -131,7 +123,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
     inactive.exit().remove();
     inactive
       .style('stroke', '#cccccc')
-      .style('stroke-width', (d: any) => d.name === 'israel' ? 2 : 1)
+      .style('stroke-width', (d: any) => d.name === 'israel' ? 2 : (this.layout.mobile ? 0.5 : 1))
       .style('fill', 'none')
       .attr('d', (d: any) => this.pathGenerator(d))
       .style('stroke-dasharray', (d: any, i: number, nodes: Element[]) => (nodes[i] as SVGPathElement).getTotalLength())
@@ -152,8 +144,22 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       .style('fill', 'none')
       .attr('d', (d: any) => this.pathGenerator(d))
       .on('mouseover', (_: Event, d: Country) => this.hover.emit([{stepName: this.data.name}, ...this.highlighted, {country: d, stepName: this.data.name, hover: true}]))
+      .on('touchmove', (_: Event, d: Country) => this.hover.emit([{stepName: this.data.name}, ...this.highlighted, {country: d, stepName: this.data.name, hover: true}]))
       .on('mouseout', () => this.hover.emit([{stepName: this.data.name}, ...this.highlighted]))
     ;
+
+    const beads = group.selectAll('.bead')
+      .data([...data.active, ...data.inactive], (d: any) => (d as Country).name);
+    beads.enter()
+      .append('ellipse')
+      .attr('class', 'bead')
+      .style('stroke', '#cccccc')
+      .style('stroke-width', (d: any) => d.name === 'israel' ? 2 : 1)
+      .style('fill', '#fafafa')
+      .attr('cx', (d: any) => this.x(d.position))
+      .attr('cy', this.height)
+      .attr('rx', this.layout.desktop ? 4 : 2.5)
+      .attr('ry', this.layout.desktop ? 6 : 4);
   }
 
   ngOnChanges(changes: SimpleChanges): void {

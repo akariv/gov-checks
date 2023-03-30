@@ -3,6 +3,7 @@ import { path } from 'd3-path';
 import { select } from 'd3-selection';
 import { animationFrameScheduler, delay, EMPTY, filter, first, interval, ReplaySubject, switchMap, take, tap, timer } from 'rxjs';
 import { flag_names, flags } from '../flags';
+import { LayoutService } from '../layout.service';
 import { IStage } from '../stage/istage';
 import { LayoutUtils } from '../stage/layout-utils';
 import { REVEAL_ANIMATION_DURATION } from '../stages/animations';
@@ -33,7 +34,7 @@ export class StageIntroComponent implements IStage {
   selectedCountries: Country[] = [];
   introducedCountries: {[key: string]: boolean} = {};
 
-  constructor(public el: ElementRef) {
+  constructor(public el: ElementRef, private layout: LayoutService) {
     this.ready.pipe(
       switchMap(() => this.params),
       filter((data) => !!data),
@@ -141,7 +142,7 @@ export class StageIntroComponent implements IStage {
     active.exit().remove();
     active
       .style('stroke', '#cccccc')
-      .style('stroke-width', 1)
+      .style('stroke-width', (d: Country) => d.name === 'israel' ? 2 : (this.layout.mobile ? 0.5 : 1))
       .style('fill', 'none')
       .attr('d', (d: any) => this.pathGenerator(d))
       .style('stroke-dasharray', (d: any, i: number, nodes: Element[]) => (nodes[i] as SVGPathElement).getTotalLength())
