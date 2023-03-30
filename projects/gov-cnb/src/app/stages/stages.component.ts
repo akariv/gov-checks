@@ -327,7 +327,7 @@ export class StagesComponent implements AfterViewInit {
         const space = this.layout.mobile ? 9.5 : 13;
         const dstX = this.layoutUtils.x(position);
         const dstY = (stepIndex_ + 1) * this.height - space*height.height;
-        const active = position.active && step_.name === point.step.name;
+        const active = position.active && (step_.name === point.step.name || (step_.name === 'outro' && point.step.name === 'constitution'));
         pointAnimation.dstActive = active;
         if ((pointAnimation.dstY < dstY) && !active) {
           pointAnimation.srcX = pointAnimation.dstX;
