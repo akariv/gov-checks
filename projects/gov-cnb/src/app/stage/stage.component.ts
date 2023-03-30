@@ -158,7 +158,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       .style('fill', '#fafafa')
       .attr('cx', (d: any) => this.x(d.position))
       .attr('cy', this.height)
-      .attr('rx', this.layout.desktop ? 4 : 2.5)
+      .attr('rx', this.layout.desktop ? 4 : 2)
       .attr('ry', this.layout.desktop ? 6 : 4);
   }
 
