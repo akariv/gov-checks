@@ -44,7 +44,7 @@ export class CountryHoverComponent implements OnChanges{
     });
     this.moveRight = 0;
     this.visible = false;
-    if (this.hover) {
+    if (this.hover || !this.animated) {
       timer(1).subscribe(() => {
         const left = this.backdrop.nativeElement.getBoundingClientRect().left;
         if (left < 16) {

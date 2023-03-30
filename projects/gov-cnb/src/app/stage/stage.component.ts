@@ -69,7 +69,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
     const x = e.touches[0].clientX - this.el.nativeElement.getBoundingClientRect().left;
     const y = e.touches[0].clientY - this.el.nativeElement.getBoundingClientRect().top;
     // console.log('TOUCH0', y, this.height);
-    if (y > this.height - 50) {
+    if (y > this.height/2) {
       let minDist = 1000;
       let minCountry: Country | undefined;
       [...this.data.inactive, ...this.data.active].forEach((c) => {
