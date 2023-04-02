@@ -1,7 +1,10 @@
 <svg width="32" height="56" viewBox="0 0 32 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="5" y="2" width="22" height="38" rx="11" stroke="#0052B4" stroke-width="2"/>
-<rect x="14.0742" y="9.64062" width="3.85107" height="9.20703" rx="1.92554" fill="#0052B4"/>
-<path d="M21.657 45L16.0001 48.6569L10.3433 45" stroke="#0052B4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<rect x="4.5" y="2.5" width="23" height="37" rx="11.5" stroke="#0052B4" stroke-width="3"/>
+<rect x="14.0745" y="9.64014" width="3.85107" height="9.20703" rx="1.92554" fill="#0052B4">
     <animateTransform attributeName="transform" type="translate" values="0 0; 0 4; 0 0" dur="1.2s" repeatCount="indefinite"/>
+</rect>
+<path d="M25 43.2705L16 48.2705L7 43.2705" stroke="#0052B4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" transform-origin="16 43">
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 4; 0 0" dur="1.2s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="scale" values="1 1; 1 1.2; 1 1" dur="1.2s" repeatCount="indefinite" additive="sum"/>
 </path>
 </svg>

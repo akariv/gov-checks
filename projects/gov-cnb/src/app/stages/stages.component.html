@@ -6,6 +6,7 @@
             (mouseover)='hoverHovering(point.country)' (mouseout)='hoverHovering(null)'
         ></div>    
     </div>
+    <div class='tap-guide layout-mobile' *ngIf='tapGuide'></div>
     <ng-container *ngFor='let highlight of highlightCountries'>
         <app-country-hover [style.left]='highlight.x + "px"' *ngIf='highlight.country && scrollAnimation.stopped && active' 
                            [country]='highlight.country' [steps]='steps' [currentStepIndex]='currentStepIndex' 

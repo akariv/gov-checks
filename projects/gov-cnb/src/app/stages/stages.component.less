@@ -58,6 +58,20 @@
             }    
         }
     
+        .tap-guide {
+            position: fixed;
+            top: calc(55vh ~'-' 80px);
+            width: 60px;
+            height: 54px;
+            background-image: url(../../assets/img/swipe-left.svg);
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            animation: tap-guide 3s;
+            animation-fill-mode: both;
+            animation-timing-function: linear;
+        }
+
         app-country-hover {
             position: fixed;
             top: 55vh;
@@ -70,5 +84,24 @@
             height: 50vh;
             flex: 0 0 auto;
         }
+    }
+}
+
+@keyframes tap-guide {
+    0% {
+        opacity: 0;
+        transform: translateX(200px);
+    }
+    25% {
+        opacity: 1;
+        transform: translateX(100px);
+    }
+    75% {
+        opacity: 1;
+        transform: translateX(-100px);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-200px);
     }
 }

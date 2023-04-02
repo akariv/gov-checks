@@ -12,7 +12,7 @@
     background-color: @bg;
     &.active {
         scroll-snap-type: y mandatory;
-        scroll-snap-stop: always;    
+        scroll-snap-stop: always;
     }
     
     app-stages {
@@ -120,8 +120,8 @@
                         align-self: flex-start;
                         .font;
                         font-weight: 400;
-                        font-size: 16px;
-                        line-height: 16px;
+                        font-size: 18px;
+                        line-height: 18px;
                         color: @blue;
                         display: table;
                     }
@@ -129,8 +129,8 @@
                         align-self: flex-start;
                         .font;
                         font-weight: 700;
-                        font-size: 16px;
-                        line-height: 16px;
+                        font-size: 18px;
+                        line-height: 18px;
                         color: #828282;
                         margin-bottom: 16px;
                         display: table;
@@ -161,6 +161,11 @@
             &.intro-slide {
                 padding-top: 0;
                 justify-content: center;
+            }
+            &.laws-slide {
+                .mobile({
+                    padding-top: 5vh;
+                });
             }
         }
     }
@@ -255,9 +260,14 @@
         transform: translateY(-100%);
         opacity: 1;
         transition: opacity 2s ease-in-out;
-        &.hide {
+        &.small {
             .desktop({
                 background-image: url(../assets/img/scrolldown-mobile.svg);
+            });
+        }
+        &.hide {
+            .mobile({
+                opacity: 0;
             });
         }
     }

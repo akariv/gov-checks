@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Input, NgZone, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { delay, interval, map, Observable, switchMap, take, tap, timer } from 'rxjs';
+import { delay, filter, interval, map, Observable, switchMap, take, tap, timer } from 'rxjs';
 import { LayoutService } from '../layout.service';
 import { IStage } from '../stage/istage';
 import { LayoutUtils } from '../stage/layout-utils';
@@ -49,6 +49,7 @@ export class StagesComponent implements AfterViewInit {
   lastMovePoints = -1;
   highlightCountries: Highlight[] = [];
   lastSlide = false;
+  tapGuide = false;;
 
   constructor(private el: ElementRef, private layout: LayoutService) {
     this.animator = new Animator();
@@ -276,12 +277,19 @@ export class StagesComponent implements AfterViewInit {
       console.log('OUTRO ANIMATION', outroStageData);
       obs = obs.pipe(
         delay(5000),
+        tap(() => {
+          this.tapGuide = true;          
+        }),
         switchMap(() => interval(50)),
         take(outroStageData.active.length),
         map((i: number) => outroStageData.active.length - i - 1),
         tap((i) => {
           outroStage.selectCountries(outroStageData.active.slice(i, i + 1), false);
-        })
+        }),
+        filter((i) => i === 0),
+        tap(() => {
+          this.tapGuide = false;
+        })     
       );
     }
     obs.subscribe();

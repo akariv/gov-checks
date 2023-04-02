@@ -14,7 +14,12 @@
         justify-content: center;
         align-items: center;
         width: 300px;
-        height: 380px;
+        .mobile({
+            height: 330px;
+        });
+        .desktop({
+            height: 380px;
+        });
         .mobile({
             width: 250px;
             height: 310px;
@@ -35,7 +40,8 @@
             align-items: center;
             gap: 18px;
             position: absolute;
-            animation: appear 0.3s ease-in-out 0s 1 normal both paused;
+            opacity: 0;
+            animation: appear 0.3s ease-out 0s 1 normal forwards paused;
 
             &.animate {
                 animation-play-state: running;
@@ -116,17 +122,33 @@
     }
 
     .shuffle {
-        width: 27px;
-        height: 30px;
-        background-image: url(../../assets/img/shuffle-bills.svg);
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
-        transition: transform 300ms ease-in-out;
-        transform: rotate(0deg);
-        transform-origin: center;
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        gap: 16px;
+
+        .shuffle-text {
+            .font;            
+            font-weight: 700;
+            font-size: 20px;
+            line-height: 32px;
+            color: #828282;
+        }
+        .shuffle-icon {
+            width: 27px;
+            height: 30px;
+            background-image: url(../../assets/img/shuffle-bills.svg);
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            transition: transform 300ms ease-in-out;
+            transform: rotate(0deg);
+            transform-origin: center;    
+        }
         &:hover {
-            transform: rotate(360deg);
+            .shuffle-icon {
+                transform: rotate(360deg);
+            }
         }
         pointer-events: all;
         cursor: pointer;
@@ -194,7 +216,7 @@
 @keyframes appear {
     0% {
         transform: translateY(30px);
-        opacity: 0;
+        opacity: 0.5;
     }
     100% {
         transform: translateY(0);

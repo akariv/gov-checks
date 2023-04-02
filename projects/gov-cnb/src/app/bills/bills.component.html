@@ -1,13 +1,18 @@
 <div class='bills'>
-    <div class='bill' [class.animate]='animate' 
-        [style.zIndex]='zIndexes[i]'
-        *ngFor='let bill of bills; let i = index'>
-        <div class='bill-box' #billBox>
-            <div class='bill-content'>
-                <div class='title'>{{bill.title}}</div>
-                <div class='subtitle'>{{bill.subtitle}}</div>    
+    <ng-container *ngFor='let bill of bills; let i = index'>
+        <div class='bill' [class.animate]='animate' 
+            [style.zIndex]='zIndexes[i]'
+            *ngIf='i !== top'>
+            <div class='bill-box' #billBox>
+                <div class='bill-content'>
+                    <div class='title'>{{bill.title}}</div>
+                    <div class='subtitle'>{{bill.subtitle}}</div>    
+                </div>
             </div>
         </div>
-    </div>
+    </ng-container>
 </div>
-<div class='shuffle' (click)='shuffle()'></div>
+<div class='shuffle' (click)='shuffle()'>
+    <div class='shuffle-icon'></div>
+    <div class='shuffle-text'>החלף</div>
+</div>
