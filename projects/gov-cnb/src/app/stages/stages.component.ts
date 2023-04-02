@@ -12,7 +12,6 @@ import { AnimationHandler, Animator, PointAnimationHandler, POINT_ANIMATION_DURA
   styleUrls: ['./stages.component.less'],
 })
 export class StagesComponent implements AfterViewInit {
-
   position: Position = {active: false, index: 0};
 
   @Input() countries: Country[];
@@ -371,7 +370,7 @@ export class StagesComponent implements AfterViewInit {
       const countryNames = this.highlightCountries.map((h) => h.country?.name || '') || [];
       const hoverNames = this.highlightCountries.filter((h) => h.hover).map((h) => h.country?.name || '') || [];
       this.pointAnimations.forEach((anim) => {
-        const lastSlide =  this.lastSlide && anim.point.step.name === 'constitution';
+        const lastSlide =  this.lastSlide && (anim.point.step.name === 'constitution' || anim.point.country.name === 'israel');
         const active = anim.dstActive || hoverNames.indexOf(anim.point.country.name) >= 0 || lastSlide;
         const highlight = anim.dstActive && countryNames.indexOf(anim.point.country.name) >= 0;
         anim.point.updateActive(active, highlight);
@@ -379,4 +378,15 @@ export class StagesComponent implements AfterViewInit {
     }
   }
 
+  hoverHovering(country: Country | null) {
+    this.currentStage?.externalHover(country);
+  }
+
+  reset() {
+    this.firstTime = true;
+    this.stageComponents.forEach((stage) => {
+      stage.reset();
+      stage.selectCountries([], false);
+    });
+  }
 }

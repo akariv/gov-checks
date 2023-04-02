@@ -205,8 +205,8 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       .style('fill', '#cccccc')
       .attr('cx', (d: any) => this.x(d.position))
       .attr('cy', this.height)
-      .attr('rx', this.layout.desktop ? 4 : 2)
-      .attr('ry', this.layout.desktop ? 4 : 2);
+      .attr('rx', this.layout.desktop ? 3 : 2)
+      .attr('ry', this.layout.desktop ? 3 : 2);
       // .attr('ry', this.layout.desktop ? 6 : 4);
   }
 
@@ -222,6 +222,11 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       this.svg.attr('class', 'revealed');
       console.log('REVEAL', this.data.name, this.data.display, this.data.active);
     }
+  }
+
+  reset() {
+    this.revealed = false;
+    this.svg.attr('class', '');
   }
   
   selectCountries(countries: Country[], animated: boolean) {
@@ -253,4 +258,13 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
     this.hover.emit([{stepName: this.data.name}, ...this.highlighted]);
   }
 
+  externalHover(country: Country | null): void {
+    if (country) {
+      const country_ = [...this.data.active, ...this.data.inactive].find((c) => c.name === country.name);
+      const highlight: Highlight = {country: country_, stepName: this.data.name, hover: true};
+      this.hover.emit([{stepName: this.data.name}, highlight, ...this.highlighted]);
+    } else {
+      this.hover.emit([{stepName: this.data.name}, ...this.highlighted]);
+    }
+  }
 }

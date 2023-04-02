@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, ViewChild } from '@angular/core';
 import { timer } from 'rxjs';
 import { flags } from '../flags';
 import { Country, Step } from '../types';
@@ -19,6 +19,8 @@ export class CountryHoverComponent implements OnChanges{
   @Input() currentStepIndex: number;
   @Input() hover = false;
   @Input() animated = true;
+
+  @Output() hovering = new EventEmitter<Country | null>();
 
   @ViewChild('backdrop') backdrop: ElementRef<HTMLDivElement>;
 
@@ -53,5 +55,10 @@ export class CountryHoverComponent implements OnChanges{
         this.visible = true;
       });  
     }
+  }
+
+  setHover(value: boolean) {
+    this.hover = value;
+    this.hovering.emit(value ? this.country : null);
   }
 }

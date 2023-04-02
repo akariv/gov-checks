@@ -185,6 +185,7 @@
         scroll-snap-align: center;
         flex: 0 0 30vh;
         padding-top: 0;
+        margin-top: -30vh;
 
         .font;
         font-weight: 400;
@@ -251,14 +252,30 @@
     .scroll-on {
         position: fixed;
         top: calc(100vh ~'-' 32px);
+        width: 32px;
+        height: 56px;
+        cursor: pointer;
+        z-index: 3;
+        .desktop({
+            background-image: url(../assets/img/scrolldown.svg);
+        });
         .mobile({
+            background-image: url(../assets/img/scrolldown-mobile.svg);
             top: 85vh;
         });
+        background-repeat: no-repeat;
+        background-position: bottom center;
+        background-size: contain;
         transform: translateY(-100%);
         opacity: 1;
         transition: opacity 2s ease-in-out;
         &.hide {
-            opacity: 0;
+            .mobile({
+                opacity: 0;
+            });
+            .desktop({
+                background-image: url(../assets/img/scrolldown-mobile.svg);
+            });
         }
     }
     .skip-to-end {
@@ -302,7 +319,8 @@
         opacity: 0;
         transition: opacity 0.5s ease-in-out;
 
-        display: flex;
+        // display: flex;
+        display: none;
         flex-flow: row nowrap;
         align-items: center;
         // justify-content: center;
@@ -346,47 +364,52 @@
         }
     }
 
-    .footer {
-        scroll-snap-align: start;
-        padding: 80px 16px;
-        display: flex;
-        flex-flow: row wrap;
-        justify-content: center;
-        align-items: flex-start;
-        gap: 40px;
-        max-width: 760px;
+    .footer-container {
         background-color: @bg;
         z-index: 10;
+        display: flex;
+        flex-flow: column;
+        align-items: center;
 
-        .footer-section {
-            flex: 0 1 340px;
-            .font;
-            font-weight: 400;
-            font-size: 16px;
-            line-height: 22px;
-            color: @blue;
+        .footer {
+            scroll-snap-align: start;
+            padding: 80px 16px;
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+            max-width: 760px;
     
-            h3 {
+            .footer-section {
+                flex: 0 1 340px;
                 .font;
-                font-weight: 700;
-                font-size: 24px;
-                line-height: 32px;
-                margin: 0;
-                margin-bottom: 8px;
-            }
-            
-            ::ng-deep {
-                p {
+                font-weight: 400;
+                font-size: 16px;
+                line-height: 22px;
+                color: @blue;
+        
+                h3 {
+                    .font;
+                    font-weight: 700;
+                    font-size: 24px;
+                    line-height: 32px;
                     margin: 0;
                     margin-bottom: 8px;
-                    text-align: justify;
                 }
-                a {
-                    color: inherit;
+                
+                ::ng-deep {
+                    p {
+                        margin: 0;
+                        margin-bottom: 8px;
+                        text-align: justify;
+                    }
+                    a {
+                        color: inherit;
+                    }
                 }
             }
         }
-        
         .berl {
             width: 150px;
             display: flex;

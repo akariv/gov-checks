@@ -13,7 +13,7 @@
             }
         }
         .flag {
-            image {
+            image, circle {
                 transform: scale(0);
                 transform-origin: 10px 10px;
                 opacity: 0;
@@ -21,19 +21,19 @@
             }
 
             :not(.show) {
-                image {
+                image, circle {
                     transition-delay: 0 !important;
                 }
             }
             &.show {
-                image {
+                image, circle {
                     transform: scale(1);
                     opacity: 1;
                     transition-duration: 0.1s;
                 }
             }
             &.half-show {
-                image {
+                image, circle {
                     transform: scale(0.5);
                     opacity: 1;
                     transition-duration: 0.1s;

@@ -107,14 +107,14 @@ export class AppComponent implements AfterViewInit {
       this.setupObserver();
       const content = this.slidesContainer.nativeElement.querySelector('.slide:first-child > *:first-child') as HTMLElement;
       const titleEl = this.titleImg.nativeElement as HTMLImageElement;
-      titleEl.style.top = (content.getBoundingClientRect().top - 145) + 'px';
+      titleEl.style.top = (content.getBoundingClientRect().top - 145 + window.scrollY) + 'px';
       titleEl.style.display = 'block';
       this.resetScrolledOnce();
     });
   }  
 
   resetScrolledOnce() {
-    this.scrolledOnce = false;
+    this.scrolledOnce = window.scrollY > 100;
     fromEvent<MouseEvent>(this.el.nativeElement, 'scroll', ).pipe(
       filter((e: Event) => {
         const top = (e.target as HTMLElement).scrollTop;
@@ -130,6 +130,13 @@ export class AppComponent implements AfterViewInit {
         console.log('active observer', el);
         this.activeObserver.observe(el);
       });    
+    });
+  }
+
+  reset() {
+    timer(3000).subscribe(() => {
+      this.resetScrolledOnce();
+      this.stages.reset();
     });
   }
 
@@ -175,15 +182,16 @@ export class AppComponent implements AfterViewInit {
   }
 
   highlightStepText() {
-    const el = this.stepTexts.toArray()[this.currentStepIndex].nativeElement;
-    const left = el.offsetLeft;
-    const right = left + el.offsetWidth;
-    const parent = el.offsetParent as HTMLElement;
-    if (parent.scrollLeft > left) {
-      parent.scrollTo({left, behavior: 'smooth'});
-    } else if (parent.scrollLeft + parent.offsetWidth < right) {
-      parent.scrollTo({left: right - parent.offsetWidth, behavior: 'smooth'});
-    }
+    return;
+    // const el = this.stepTexts.toArray()[this.currentStepIndex].nativeElement;
+    // const left = el.offsetLeft;
+    // const right = left + el.offsetWidth;
+    // const parent = el.offsetParent as HTMLElement;
+    // if (parent.scrollLeft > left) {
+    //   parent.scrollTo({left, behavior: 'smooth'});
+    // } else if (parent.scrollLeft + parent.offsetWidth < right) {
+    //   parent.scrollTo({left: right - parent.offsetWidth, behavior: 'smooth'});
+    // }
   }
 
   scrollMore(selector: string) {

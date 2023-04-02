@@ -169,20 +169,33 @@ export class StageIntroComponent implements IStage {
     const showFlags = new Set([...selectedFlags, ...this.animateCountry]);
     const flagImages = group.selectAll('.flag')
       .data(flag_names);
-    flagImages.enter()
+    const newImages = flagImages.enter()
       .append('g')
       .attr('class', 'flag')
       .attr('transform', (d: any) => `translate(${this.countryPositions[d].x - 10}, ${this.countryPositions[d].y - 10})`)
       // .attr('x', (d: any) => this.countryPositions[d].x - 10)
       // .attr('y', (d: any) => this.countryPositions[d].y - 10)
+    newImages
+      .append('circle')
+      .attr('r', 11)
+      .attr('cx', 10)
+      .attr('cy', 10)
+      .style('fill', '#cccccc')
+      .style('stroke', null);
+    newImages
       .append('image')
       .attr('xlink:href', (d: string) => flags[d])
       .attr('width', 20)
       .attr('height', 20)
     ;
     flagImages
-      .attr('class', (d: string) => 'flag' + (showFlags.has(d) ? (selectedFlags.includes(d) ? ' show' : ' half-show') : ''))
+      .attr('class', (d: string) => 'flag' + (showFlags.has(d) ? (selectedFlags.includes(d) ? ' show' : ' half-show') : ''));
+    flagImages
       .select('image')
+      .style('transition-delay', (d: string, i: number) => this.finishedAnimation ? (i * 10) + 'ms' : '0ms')
+    ;
+    flagImages
+      .select('circle')
       .style('transition-delay', (d: string, i: number) => this.finishedAnimation ? (i * 10) + 'ms' : '0ms')
     ;
     flagImages.exit().remove();
@@ -200,8 +213,18 @@ export class StageIntroComponent implements IStage {
       this.svg?.attr('class', 'revealed');
     }
   }
+
+  reset() {
+    this.revealed = false;
+    this.finishedAnimation = false;
+    this.introducedCountries = {};
+    this.svg?.attr('class', '');
+    this.ready.next();
+  }
   
   selectCountries(countries: Country[]) {
     this.countrySelections.next(countries);
   }
+
+  externalHover(country: Country | null): void {}
 }

@@ -8,7 +8,9 @@
     <ng-container *ngFor='let highlight of highlightCountries'>
         <app-country-hover [style.left]='highlight.x + "px"' *ngIf='highlight.country && scrollAnimation.stopped && active' 
                            [country]='highlight.country' [steps]='steps' [currentStepIndex]='currentStepIndex' 
-                           [hover]='!!highlight.hover' [animated]='!!highlight.animated'></app-country-hover>
+                           [hover]='!!highlight.hover' [animated]='!!highlight.animated'
+                           (hovering)='hoverHovering($event)'
+        ></app-country-hover>
     </ng-container>
     <div class='buffer'></div>
 </div>
