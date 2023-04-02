@@ -64,7 +64,7 @@ export class AppComponent implements AfterViewInit {
 
   prepareShare() {
     const shareText = this.content.shareText;
-    const url = 'https://save-democracy.berl.org.il';
+    const url = 'https://save-democracy.berl.org.il/';
     this.shareData = {
       text: shareText,
       url
