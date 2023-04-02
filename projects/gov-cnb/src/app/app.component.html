@@ -5,8 +5,6 @@
       [attr.id]='slide.slug'
       [class.header-slide]='!!slide.slug && slide.slug !== "introduction"'
       [class.intro-slide]='slide.slug === "introduction"'
-      [class.laws-slide]='i === content.lawsSlideIndex  || i === content.lawsSlideIndex2 || i === content.lawsSlideIndex2 + 2'
-      [class.laws-slide-2]='i === content.lawsSlideIndex+1'
     >
     <div class='slide-text' [innerHtml]='slide.textHtml'></div>
     <ng-container *ngIf='bills && (i === content.lawsSlideIndex || i === content.lawsSlideIndex2)'>
@@ -17,7 +15,9 @@
 <ng-container *ngIf='countries && steps'>
   <app-stages [countries]='countries' [steps]='steps' [active]='active' #stages></app-stages>
 </ng-container>
-<div class='scroll-on' [class.hide]='scrolledOnce' (click)='scrollMore("div[data-slide-idx=\"" + (currentSlide + 1) + "\"]")'></div>
+<div class='scroll-on' [class.hide]='scrolledOnce' (click)='scrollMore("div[data-slide-idx=\"" + (currentSlide + 1) + "\"]")'
+  *ngIf='!(currentSlide === content.lawsSlideIndex || currentSlide === content.lawsSlideIndex2)'
+></div>
 <a class='skip-to-end' href='#outro' [class.hide]='scrolledOnce'></a>
 
 <div class='share-cta' *ngIf='scrolledOnce'>
