@@ -176,7 +176,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
 
     const hoverable = group.selectAll('.path.hoverable')
       .data([...data.active, ...data.inactive], (d: any) => (d as Country).name);
-    hoverable.enter()
+    const newHoverable = hoverable.enter()
       .append('path')
       .attr('class', 'path hoverable');
     hoverable.exit().remove();
@@ -186,7 +186,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       .style('fill', 'none')
       .attr('d', (d: any) => this.pathGenerator(d));
     if (!this.layout.mobile) {
-      hoverable
+      newHoverable
         .on('mouseover', (e: Event, d: Country) => {
           this.hover.emit([{stepName: this.data.name}, ...this.highlighted, {country: d, stepName: this.data.name, hover: true}]);
         })
@@ -201,13 +201,24 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       .append('ellipse')
       .attr('class', 'bead')
       .style('stroke', '#fafafa')
-      .style('stroke-width', 1)//(d: any) => d.name === 'israel' ? 2 : 1)
+      .style('stroke-width', 2)//(d: any) => d.name === 'israel' ? 2 : 1)
       .style('fill', '#cccccc')
       .attr('cx', (d: any) => this.x(d.position))
       .attr('cy', this.height)
       .attr('rx', this.layout.desktop ? 3 : 2)
       .attr('ry', this.layout.desktop ? 3 : 2);
       // .attr('ry', this.layout.desktop ? 6 : 4);
+    // if (!this.layout.mobile) {
+    //   newBeads
+    //     .on('mouseover', (e: Event, d: Country) => {
+    //       console.log('GGGGGGGG');
+    //       this.hover.emit([{stepName: this.data.name}, ...this.highlighted, {country: d, stepName: this.data.name, hover: true}]);
+    //     })
+    //     .on('mouseout', (e: Event, d: Country) => {
+    //       this.hover.emit([{stepName: this.data.name}, ...this.highlighted]);
+    //     });
+    // }
+  
   }
 
   ngOnChanges(changes: SimpleChanges): void {

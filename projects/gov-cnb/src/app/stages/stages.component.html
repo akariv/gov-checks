@@ -1,8 +1,9 @@
 <div class='container' [style.top]='scrollAnimation.scrollTop + "px"'>
     <app-stage-intro [data]='introStageData' #intro></app-stage-intro>
-    <app-stage [data]='stage' (hover)='hoverPosition($event)' *ngFor='let stage of stages' #stage></app-stage>
+    <app-stage [data]='stage' (hover)='hoverPosition($event)' *ngFor='let stage of stages; let i = index' #stage [style.zIndex]='10 - i'></app-stage>
     <div class='points'>
         <div class='point' *ngFor='let point of points' #points [attr.data-id]='point.id'
+            (mouseover)='hoverHovering(point.country)' (mouseout)='hoverHovering(null)'
         ></div>    
     </div>
     <ng-container *ngFor='let highlight of highlightCountries'>

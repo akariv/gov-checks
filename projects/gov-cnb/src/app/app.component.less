@@ -247,6 +247,7 @@
         .mobile({
             background-image: url(../assets/img/scrolldown-mobile.svg);
             top: 85vh;
+            pointer-events: none;
         });
         background-repeat: no-repeat;
         background-position: bottom center;
@@ -255,9 +256,6 @@
         opacity: 1;
         transition: opacity 2s ease-in-out;
         &.hide {
-            .mobile({
-                opacity: 0;
-            });
             .desktop({
                 background-image: url(../assets/img/scrolldown-mobile.svg);
             });

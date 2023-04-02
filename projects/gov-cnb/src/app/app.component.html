@@ -16,7 +16,6 @@
   <app-stages [countries]='countries' [steps]='steps' [active]='active' #stages></app-stages>
 </ng-container>
 <div class='scroll-on' [class.hide]='scrolledOnce' (click)='scrollMore("div[data-slide-idx=\"" + (currentSlide + 1) + "\"]")'
-  *ngIf='!(currentSlide === content.lawsSlideIndex || currentSlide === content.lawsSlideIndex2)'
 ></div>
 <a class='skip-to-end' href='#outro' [class.hide]='scrolledOnce'></a>
 
