@@ -197,7 +197,7 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
 
     const beads = group.selectAll('.bead')
       .data([...data.active, ...data.inactive], (d: any) => (d as Country).name);
-    beads.enter()
+    const newBeads = beads.enter()
       .append('ellipse')
       .attr('class', 'bead')
       .style('stroke', '#fafafa')
@@ -208,16 +208,15 @@ export class StageComponent implements AfterViewInit, OnChanges, IStage {
       .attr('rx', this.layout.desktop ? 3 : 2)
       .attr('ry', this.layout.desktop ? 3 : 2);
       // .attr('ry', this.layout.desktop ? 6 : 4);
-    // if (!this.layout.mobile) {
-    //   newBeads
-    //     .on('mouseover', (e: Event, d: Country) => {
-    //       console.log('GGGGGGGG');
-    //       this.hover.emit([{stepName: this.data.name}, ...this.highlighted, {country: d, stepName: this.data.name, hover: true}]);
-    //     })
-    //     .on('mouseout', (e: Event, d: Country) => {
-    //       this.hover.emit([{stepName: this.data.name}, ...this.highlighted]);
-    //     });
-    // }
+    if (!this.layout.mobile) {
+      newBeads
+        .on('mouseover', (e: Event, d: Country) => {
+          this.hover.emit([{stepName: this.data.name}, ...this.highlighted, {country: d, stepName: this.data.name, hover: true}]);
+        })
+        .on('mouseout', (e: Event, d: Country) => {
+          this.hover.emit([{stepName: this.data.name}, ...this.highlighted]);
+        });
+    }
   
   }
 
