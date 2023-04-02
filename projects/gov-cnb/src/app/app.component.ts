@@ -7,6 +7,7 @@ import { Step, Country, Slide, Bill } from './types';
 import { marked } from 'marked';
 import { MarkdownService } from './markdown.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { ActivatedRoute, Route } from '@angular/router';
 
 
 @Component({
@@ -45,7 +46,7 @@ export class AppComponent implements AfterViewInit {
   active = true;
   activeCount: number = 0;
 
-  constructor(private data: DataService, private el: ElementRef, public md: MarkdownService, private sanitizer: DomSanitizer) {
+  constructor(private data: DataService, private el: ElementRef, public md: MarkdownService, private sanitizer: DomSanitizer, private route: ActivatedRoute) {
     // Marked.js options
     const renderer = new marked.Renderer();
     const linkRenderer = renderer.link;
@@ -103,14 +104,23 @@ export class AppComponent implements AfterViewInit {
       //     })    
       //   )
       // )
-    ).subscribe(() => {
-      this.setupObserver();
-      const content = this.slidesContainer.nativeElement.querySelector('.slide:first-child > *:first-child') as HTMLElement;
-      const titleEl = this.titleImg.nativeElement as HTMLImageElement;
-      titleEl.style.top = (content.getBoundingClientRect().top - 145 + window.scrollY) + 'px';
-      titleEl.style.display = 'block';
-      this.resetScrolledOnce();
-    });
+      tap(() => {
+        this.setupObserver();
+        const content = this.slidesContainer.nativeElement.querySelector('.slide:first-child > *:first-child') as HTMLElement;
+        const titleEl = this.titleImg.nativeElement as HTMLImageElement;
+        titleEl.style.top = (content.getBoundingClientRect().top - 145 + window.scrollY) + 'px';
+        titleEl.style.display = 'block';
+        this.resetScrolledOnce();
+      }),
+      delay(1000),
+      switchMap(() => this.route.fragment),
+      first(),
+      tap((fragment) => {
+        if (fragment === 'outro') {
+          this.scrollMore('#outro');
+        }
+      })
+    ).subscribe();
   }  
 
   resetScrolledOnce() {
