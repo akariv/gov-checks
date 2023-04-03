@@ -59,8 +59,8 @@ export class DataService {
   }
 
   fetch(table: string) {
-    const url = `${this.URL}${table}`;
-    // const url = `/assets/cache/${table.toLowerCase()}.json`;
+    // const url = `${this.URL}${table}`;
+    const url = `/assets/cache/${table.toLowerCase()}.json`;
     const params = {
       maxRecords: 1000,
       view: 'WEBSITE'
