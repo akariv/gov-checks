@@ -5,12 +5,20 @@
     flex-flow: column;
     align-items: flex-start;
     transform: translateX(-100%)translateX(32.5px)translateY(6px);
+    &.ltr {
+        transform: translateX(-32.5px)translateY(6px);
+    }
     pointer-events: none;
     min-width: 200px;
 
     .pin-up {
         pointer-events: all;
-        margin-right: 16px;
+        &:not(.ltr) {
+            margin-right: 16px;
+        }
+        &.ltr {
+            margin-left: 16px;
+        }
         &.blink {
             .blink;
         }
@@ -22,7 +30,12 @@
         position: relative;
         top: -32px;
         margin-bottom: -20px;
-        right: 17px;
+        &:not(.ltr) {
+            right: 17px;
+        }
+        &.ltr {
+            left: 17px;
+        }
         &.blink {
             .blink;
         }
@@ -46,7 +59,12 @@
             font-size: 16px;
             line-height: 15px;
             color: @blue;
-            padding-right: 16px;
+            &:not(.ltr) {
+                padding-right: 16px;
+            }
+            &.ltr {
+                padding-left: 16px;
+            }
         }
     
         .steps {

@@ -1,5 +1,7 @@
 import { Position } from "../types";
 
+import { environment } from "../../environments/environment";
+
 export class LayoutUtils {
 
   PADDING = 20;
@@ -10,6 +12,7 @@ export class LayoutUtils {
 
   x(p: Position | undefined) {
     let ret = this.width / 2;
+    let ltr = !environment.rtl;
     if (p) {
       if (p.layout === 'init') {
         const width = this.width > 800 ? 800 : this.width;
@@ -33,6 +36,9 @@ export class LayoutUtils {
         const skip = (this.width - 3 * this.PADDING) / this.slots;
         ret = (!p.active ? 0 : this.PADDING + (p.numInactive || 0) * skip) + this.PADDING + p.index * skip;
       }
+    }
+    if (ltr) {
+      return this.width - ret;
     }
     return ret;
   }

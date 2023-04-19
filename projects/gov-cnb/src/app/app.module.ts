@@ -10,6 +10,7 @@ import { StagesComponent } from './stages/stages.component';
 import { StageIntroComponent } from './stage-intro/stage-intro.component';
 import { BillsComponent } from './bills/bills.component';
 import { CountryHoverComponent } from './country-hover/country-hover.component';
+import { LrlrDirective } from './lrlr.directive';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { CountryHoverComponent } from './country-hover/country-hover.component';
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
+    LrlrDirective,
   ],
   providers: [],
   bootstrap: [AppComponent]

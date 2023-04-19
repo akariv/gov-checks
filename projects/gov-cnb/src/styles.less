@@ -16,3 +16,21 @@ body {
 *, *:before, *:after {
     box-sizing: inherit;
 }
+
+*.ltr {
+    direction: ltr;
+}
+
+.only-he {
+    display: none;
+    &.lang-he {
+        display: inherit;
+    }
+}
+
+.only-en {
+    display: none;
+    &.lang-en {
+        display: inherit;
+    }
+}

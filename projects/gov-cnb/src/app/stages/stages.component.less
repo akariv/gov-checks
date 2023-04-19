@@ -13,7 +13,12 @@
     .container {
         width: 100%;
         position: absolute;
-        left: 0;
+        &:not(.ltr) {
+            left: 0;
+        }
+        &.ltr {
+            right: 0;
+        }
         display: flex;
         flex-flow: column;
         align-items: center;
@@ -39,8 +44,8 @@
                 position: absolute;
                 width: 8px;
                 height: 12px;
-                margin-left: -4px;
                 margin-top: -6px;
+                margin-left: -4px;
                 .mobile({
                     width: 4px;
                     height: 8px;
@@ -55,29 +60,38 @@
                 }
 
                 pointer-events: all;
-            }    
+            }
         }
     
+        
         .tap-guide {
             position: fixed;
             top: calc(55vh ~'-' 80px);
             width: 60px;
             height: 54px;
-            background-image: url(../../assets/img/swipe-left.svg);
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
-            animation: tap-guide 3s;
-            animation-fill-mode: both;
-            animation-timing-function: linear;
+            &:not(.ltr) {
+                background-image: url(../../assets/img/swipe-left.svg);
+                animation: tap-guide 3s;
+                animation-fill-mode: both;
+                animation-timing-function: linear;
+            }
+            &.ltr {
+                background-image: url(../../assets/img/swipe-right.svg);
+                animation: tap-guide-ltr 3s;
+                animation-fill-mode: both;
+                animation-timing-function: linear;
+            }
         }
 
         app-country-hover {
             position: fixed;
             top: 55vh;
-            left: 0;
             pointer-events: none;
             z-index: 10;
+            left: 0;
         }
         .buffer {
             width: 100%;
@@ -103,5 +117,24 @@
     100% {
         opacity: 0;
         transform: translateX(-200px);
+    }
+}
+
+@keyframes tap-guide-ltr {
+    0% {
+        opacity: 0;
+        transform: translateX(-200px);
+    }
+    25% {
+        opacity: 1;
+        transform: translateX(-100px);
+    }
+    75% {
+        opacity: 1;
+        transform: translateX(100px);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(200px);
     }
 }

@@ -1,7 +1,9 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, ViewChild } from '@angular/core';
-import { timer } from 'rxjs';
+import { tap, timer } from 'rxjs';
 import { flags } from '../flags';
 import { Country, Step } from '../types';
+import { LrlrDirective } from '../lrlr.directive';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-country-hover',
@@ -10,7 +12,8 @@ import { Country, Step } from '../types';
   host: {
     '[class.hover]': 'hover',
     '[class.animated]': 'animated'
-  }
+  },
+  hostDirectives: [LrlrDirective],
 })
 export class CountryHoverComponent implements OnChanges{
 
@@ -44,21 +47,32 @@ export class CountryHoverComponent implements OnChanges{
       this.thisSteps.push(step);
       this.thisStepsActives.push(this.country.steps.map((s) => s.name).includes(step.name));
     });
-    this.moveRight = 0;
     this.visible = false;
-    if (this.hover || !this.animated) {
-      timer(1).subscribe(() => {
-        const left = this.backdrop.nativeElement.getBoundingClientRect().left;
-        if (left < 16) {
-          this.moveRight = 16-left;
-        }
-        this.visible = true;
-      });  
-    }
+    this.updaeBackdropLocation().subscribe(() => {
+      this.visible = true;
+    });
   }
 
   setHover(value: boolean) {
     this.hover = value;
     this.hovering.emit(value ? this.country : null);
+    this.updaeBackdropLocation().subscribe();
+  }
+
+  updaeBackdropLocation() {
+    this.moveRight = 0;
+    return timer(1).pipe(tap(() => {
+      if (environment.rtl) {
+        const left = this.backdrop.nativeElement.getBoundingClientRect().left;
+        if (left < 16) {
+          this.moveRight = 16-left;
+        }
+      } else {
+        const right = this.backdrop.nativeElement.getBoundingClientRect().right;
+        if (right > window.innerWidth - 16) {
+          this.moveRight = window.innerWidth - 16 - right;
+        }
+      }
+    }));
   }
 }

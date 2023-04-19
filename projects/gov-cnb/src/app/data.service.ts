@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { forkJoin, map, ReplaySubject } from 'rxjs';
 
+import { environment } from '../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -25,6 +27,11 @@ export class DataService {
       console.log('slides', slides);
       console.log('bills', bills);
       console.log('content', content);
+      this.fixLang(steps, ['display']);
+      this.fixLang(countries, ['display']);
+      this.fixLang(slides, ['text']);
+      this.fixLang(bills, ['title', 'subtitle']);
+      this.fixLang(content, ['text']);
       // steps = steps.filter((s: any) => ['introduction', 'overview'].indexOf(s.name)===-1);
       const stepMap = steps.reduce((acc: any, step: any) => {
         acc[step._id] = step;
@@ -74,4 +81,14 @@ export class DataService {
     );
   }
 
+  fixLang(array: any[], fields: string[]) {
+    if (!environment.lang) {
+      return array;
+    }
+    return array.map((item) => {
+      fields.forEach((field) => {
+        item[field] = item[field + ':' + environment.lang];
+      });
+    });
+  }
 }

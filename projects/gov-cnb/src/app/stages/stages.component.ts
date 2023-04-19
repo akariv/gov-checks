@@ -5,6 +5,7 @@ import { IStage } from '../stage/istage';
 import { LayoutUtils } from '../stage/layout-utils';
 import { Country, Highlight, Point, Position, StageData, Step } from '../types';
 import { AnimationHandler, Animator, PointAnimationHandler, POINT_ANIMATION_DURATION, REVEAL_ANIMATION_DURATION, ScrollAnimationHandler, SCROLL_ANIMATION_DURATION } from './animations';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-stages',
@@ -49,7 +50,9 @@ export class StagesComponent implements AfterViewInit {
   lastMovePoints = -1;
   highlightCountries: Highlight[] = [];
   lastSlide = false;
-  tapGuide = false;;
+  tapGuide = false;
+
+  rtl = !!environment.rtl;
 
   constructor(private el: ElementRef, private layout: LayoutService) {
     this.animator = new Animator();

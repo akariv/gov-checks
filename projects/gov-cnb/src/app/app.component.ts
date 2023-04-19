@@ -8,6 +8,8 @@ import { marked } from 'marked';
 import { MarkdownService } from './markdown.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Route } from '@angular/router';
+import { LrlrDirective } from './lrlr.directive';
+import { environment } from '../environments/environment';
 
 
 @Component({
@@ -16,7 +18,8 @@ import { ActivatedRoute, Route } from '@angular/router';
   styleUrls: ['./app.component.less'],
   host: {
     '[class.active]': 'active'
-  }
+  },
+  hostDirectives: [LrlrDirective],
 })
 export class AppComponent implements AfterViewInit {
 
@@ -65,7 +68,10 @@ export class AppComponent implements AfterViewInit {
 
   prepareShare() {
     const shareText = this.content.shareText;
-    const url = 'https://save-democracy.berl.org.il/';
+    let url = 'https://save-democracy.berl.org.il/';
+    if (environment.lang) {
+      url += `${environment.lang}/`;
+    }
     this.shareData = {
       text: shareText,
       url
@@ -89,21 +95,6 @@ export class AppComponent implements AfterViewInit {
         this.prepareShare();
       }),
       delay(50),
-      // switchMap(() => 
-      //   interval(10000).pipe(
-      //     filter(x => !!x),
-      //     take(this.steps.length),
-      //     map(x => this.steps[x-1]),
-      //     tap(step => {
-      //       this.stages.goto(step);
-      //     }),
-      //     delay(1000),
-      //     tap(() => {
-      //       console.log('highlight', this.countries[0].display);
-      //       this.stages.highlight(this.countries[0]);
-      //     })    
-      //   )
-      // )
       tap(() => {
         this.setupObserver();
         const content = this.slidesContainer.nativeElement.querySelector('.slide:first-child > *:first-child') as HTMLElement;
@@ -193,15 +184,6 @@ export class AppComponent implements AfterViewInit {
 
   highlightStepText() {
     return;
-    // const el = this.stepTexts.toArray()[this.currentStepIndex].nativeElement;
-    // const left = el.offsetLeft;
-    // const right = left + el.offsetWidth;
-    // const parent = el.offsetParent as HTMLElement;
-    // if (parent.scrollLeft > left) {
-    //   parent.scrollTo({left, behavior: 'smooth'});
-    // } else if (parent.scrollLeft + parent.offsetWidth < right) {
-    //   parent.scrollTo({left: right - parent.offsetWidth, behavior: 'smooth'});
-    // }
   }
 
   scrollMore(selector: string) {

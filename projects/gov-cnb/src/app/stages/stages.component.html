@@ -1,17 +1,19 @@
-<div class='container' [style.top]='scrollAnimation.scrollTop + "px"'>
+<div class='container' [style.top]='scrollAnimation.scrollTop + "px"' lrlr>
     <app-stage-intro [data]='introStageData' #intro></app-stage-intro>
     <app-stage [data]='stage' (hover)='hoverPosition($event)' *ngFor='let stage of stages; let i = index' #stage [style.zIndex]='10 - i'></app-stage>
-    <div class='points'>
+    <div class='points' lrlr>
         <div class='point' *ngFor='let point of points' #points [attr.data-id]='point.id'
             (mouseover)='hoverHovering(point.country)' (mouseout)='hoverHovering(null)'
         ></div>    
     </div>
-    <div class='tap-guide layout-mobile' *ngIf='tapGuide'></div>
+    <div class='tap-guide layout-mobile' *ngIf='tapGuide' lrlr></div>
     <ng-container *ngFor='let highlight of highlightCountries'>
-        <app-country-hover [style.left]='highlight.x + "px"' *ngIf='highlight.country && scrollAnimation.stopped && active' 
+        <app-country-hover [style.left]='highlight.x + "px"' 
+                            *ngIf='highlight.country && scrollAnimation.stopped && active' 
                            [country]='highlight.country' [steps]='steps' [currentStepIndex]='currentStepIndex' 
                            [hover]='!!highlight.hover' [animated]='!!highlight.animated'
                            (hovering)='hoverHovering($event)'
+                           lrlr
         ></app-country-hover>
     </ng-container>
     <div class='buffer'></div>

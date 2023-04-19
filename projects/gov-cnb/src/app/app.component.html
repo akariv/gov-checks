@@ -1,4 +1,5 @@
-<div class='title' src='assets/img/title.svg' #title [class.small]='scrolledOnce' [class.hide]='currentSlide > 0' (click)='scrollMore("div[data-slide-idx=\"0\"]"); reset()'></div>
+<div class='title' #title 
+     [class.small]='scrolledOnce' [class.hide]='currentSlide > 0' (click)='scrollMore("div[data-slide-idx=\"0\"]"); reset()' lrlr></div>
 <div class='slides' *ngIf='slides' #slidesContainer>
   <div class='slide' *ngFor='let slide of slides; let i = index' 
       [attr.data-slide-idx]='i' 
@@ -6,6 +7,7 @@
       [class.header-slide]='!!slide.slug && slide.slug !== "introduction"'
       [class.laws-slide]='i === content.lawsSlideIndex || i === content.lawsSlideIndex2'
       [class.intro-slide]='slide.slug === "introduction"'
+      lrlr
     >
     <div class='slide-text' [innerHtml]='slide.textHtml'></div>
     <ng-container *ngIf='bills && (i === content.lawsSlideIndex || i === content.lawsSlideIndex2)'>
@@ -14,14 +16,15 @@
   </div>
 </div>
 <ng-container *ngIf='countries && steps'>
-  <app-stages [countries]='countries' [steps]='steps' [active]='active' #stages></app-stages>
+  <app-stages [countries]='countries' [steps]='steps' [active]='active' #stages lrlr></app-stages>
 </ng-container>
 <div class='scroll-on' [class.small]='scrolledOnce' [class.hide]='currentSlide === content.lawsSlideIndex2' (click)='scrollMore("div[data-slide-idx=\"" + (currentSlide + 1) + "\"]")'
 ></div>
 <a class='skip-to-end' href='#outro' [class.hide]='scrolledOnce'></a>
 
 <div class='share-cta' *ngIf='scrolledOnce'>
-  <p>יש אנשים שחשוב שיראו את זה.<br/><strong>שתפו איתם עכשיו</strong></p>
+  <p class='only-he' lrlr>יש אנשים שחשוב שיראו את זה.<br/><strong>שתפו איתם עכשיו</strong></p>
+  <p class='only-en' lrlr>יש אנשים שחשוב שיראו את זה.<br/><strong>שתפו איתם עכשיו</strong></p>
   <div class='share'>
     <a class='twitter' [href]='twitterShare' target='_blank'></a>
     <a class='facebook' [href]='fbShare' target='_blank'></a>
@@ -39,15 +42,18 @@
 <div class='footer-container' *ngIf='scrolledOnce'>
   <div class='footer' data-slide-idx='-1'>
     <div class='footer-section' *ngIf='content.methodology'>
-      <h3>מתודולוגיה ונתונים</h3>
+      <h3 class='only-he' lrlr>מתודולוגיה ונתונים</h3>
+      <h3 class='only-en' lrlr>Methodology and Data</h3>
       <div [innerHTML]="md._(content.methodology)"></div>
     </div>
     <div class='footer-section' *ngIf='content.credits'>
-      <h3>קרדיטים</h3>
+      <h3 class='only-he' lrlr>קרדיטים</h3>
+      <h3 class='only-en' lrlr>Credits</h3>
       <div [innerHTML]="md._(content.credits)"></div>
     </div>
   </div>
   <div class='berl'>
-    <img src='assets/img/berl.svg'/>
+    <img class='only-he' src='assets/img/berl.svg' lrlr/>
+    <img class='only-en' src='assets/img/berl-en.svg' lrlr/>
   </div>  
 </div>

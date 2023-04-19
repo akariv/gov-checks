@@ -50,8 +50,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "8kb"
+                  "maximumWarning": "10kb",
+                  "maximumError": "12kb"
                 }
               ],
               "outputHashing": "all"
@@ -63,6 +63,17 @@
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
+            },
+            "english": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/gov-cnb/src/environments/environment.ts",
+                  "with": "projects/gov-cnb/src/environments/environment.en.ts"
+                }
+              ],
+              "index": "projects/gov-cnb/src/index.en.html",
+              "outputPath": "dist/gov-cnb/en",
+              "deleteOutputPath": false              
             }
           },
           "defaultConfiguration": "production"
@@ -75,6 +86,9 @@
             },
             "development": {
               "browserTarget": "gov-cnb:build:development"
+            },
+            "english": {
+              "browserTarget": "gov-cnb:build:english"
             }
           },
           "defaultConfiguration": "development"

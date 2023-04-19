@@ -4,7 +4,7 @@
             [style.zIndex]='zIndexes[i]'
             *ngIf='i !== top'>
             <div class='bill-box' #billBox>
-                <div class='bill-content'>
+                <div class='bill-content' lrlr>
                     <div class='title'>{{bill.title}}</div>
                     <div class='subtitle'>{{bill.subtitle}}</div>    
                 </div>
@@ -14,5 +14,6 @@
 </div>
 <div class='shuffle' (click)='shuffle()'>
     <div class='shuffle-icon'></div>
-    <div class='shuffle-text'>החלף</div>
+    <div class='shuffle-text only-he' lrlr>החלף</div>
+    <div class='shuffle-text only-en' lrlr>Switch</div>
 </div>
