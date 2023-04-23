@@ -14,11 +14,11 @@ export class LrlrDirective implements AfterViewInit{
   ngAfterViewInit() {
     if (!environment.rtl) {
       this.el.nativeElement.classList.add('ltr');
-      if (environment.lang) {
-        this.el.nativeElement.classList.add('lang-' + environment.lang);
-      } else {
-        this.el.nativeElement.classList.add('lang-he');
-      }
+    }
+    if (environment.lang) {
+      this.el.nativeElement.classList.add('lang-' + environment.lang);
+    } else {
+      this.el.nativeElement.classList.add('lang-he');
     }
   }
 

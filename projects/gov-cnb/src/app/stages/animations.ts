@@ -3,7 +3,7 @@ import { debounce, debounceTime, Subject, timer } from "rxjs";
 import { Point } from "../types";
 
 export const POINT_ANIMATION_DURATION = 1000;
-export const SCROLL_ANIMATION_DURATION = 3000;
+export const SCROLL_ANIMATION_DURATION = 2500;
 export const REVEAL_ANIMATION_DURATION = 3000;
 
 export class AnimationHandler {

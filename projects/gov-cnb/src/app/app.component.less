@@ -14,6 +14,12 @@
         scroll-snap-type: y mandatory;
         scroll-snap-stop: always;
     }
+    &.lang-he {
+        .font;
+    }
+    &.lang-en {
+        .font-en;
+    }
     
     app-stages {
         position: sticky;
@@ -40,8 +46,11 @@
             left: 50%;
             transition-property: transform top left;
             transform-origin: 0 0;
+            transform: translateX(-50%)scale(1);
         }
-        transform: translateX(-50%)scale(1);
+        &.ltr {
+            transform: translateX(50%)scale(1);
+        }
         transition-duration: 1s;
         transition-timing-function: ease-in-out;
         z-index: 10;
@@ -137,7 +146,7 @@
                     -4px 0 6px #fafafa;
 
             .slide-text {
-                .font;
+                // .font;
                 font-weight: 400;
                 font-size: 28px;
                 line-height: 32px;
@@ -152,7 +161,7 @@
                 ::ng-deep {
                     .step-number {
                         align-self: flex-start;
-                        .font;
+                        // .font;
                         font-weight: 400;
                         font-size: 18px;
                         line-height: 18px;
@@ -161,7 +170,7 @@
                     }
                     .step-title {
                         align-self: flex-start;
-                        .font;
+                        // .font;
                         font-weight: 700;
                         font-size: 18px;
                         line-height: 18px;
@@ -211,7 +220,7 @@
         padding-top: 0;
         margin-top: -30vh;
 
-        .font;
+        // .font;
         font-weight: 400;
         font-size: 28px;
         line-height: 32px;
@@ -311,7 +320,12 @@
         .mobile({
             top: 85vh;
         });
-        left: 32px;
+        &:not(.ltr) {
+            left: 32px;
+        }
+        &.ltr {
+            right: 32px;
+        }
         transform: translateY(-100%);
         width: 80px;
         height: 60px;
@@ -368,7 +382,7 @@
         .step {
             .step-text {
                 white-space: nowrap;
-                .font;
+                // .font;
                 font-weight: 400;
                 font-size: 20px;
                 line-height: 19px;
@@ -420,14 +434,14 @@
     
             .footer-section {
                 flex: 0 1 340px;
-                .font;
+                // .font;
                 font-weight: 400;
                 font-size: 16px;
                 line-height: 22px;
                 color: @blue;
         
                 h3 {
-                    .font;
+                    // .font;
                     font-weight: 700;
                     font-size: 24px;
                     line-height: 32px;
