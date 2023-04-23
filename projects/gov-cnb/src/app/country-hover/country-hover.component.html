@@ -3,7 +3,8 @@
 <div class='backdrop' *ngIf='hover || !animated' 
     [style.left]='moveRight + "px"' 
     [style.visibility]='visible ? "visible" : "hidden"'
-    #backdrop>
+    #backdrop
+    lrlr>
     <div class='country-name' lrlr>{{country.display}}</div>
     <div class='steps' *ngIf='hover'>
         <div class='step' *ngFor='let step of thisSteps; let i = index' [class.active]='thisStepsActives[i]'>
