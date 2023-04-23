@@ -71,7 +71,7 @@
                   "with": "projects/gov-cnb/src/environments/environment.en.ts"
                 }
               ],
-              "index": "projects/gov-cnb/src/index.en.html",
+              "index": "projects/gov-cnb/src/en/index.html",
               "outputPath": "dist/gov-cnb/en",
               "deleteOutputPath": false              
             }
