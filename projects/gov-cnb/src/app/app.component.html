@@ -1,3 +1,8 @@
+<div class='lang-switch' lrlr>
+  <a class='eng' href='/en/'>English</a>
+  <div class='lang-separator'></div>
+  <a class='heb' href='/'>עברית</a>
+</div>
 <div class='title' #title 
      [class.small]='scrolledOnce' [class.hide]='currentSlide > 0' (click)='scrollMore("div[data-slide-idx=\"0\"]"); reset()' lrlr></div>
 <div class='slides' *ngIf='slides' #slidesContainer>

@@ -39,6 +39,60 @@
         z-index: 2;
     }
 
+    .lang-switch {
+        position: absolute;
+        top: 50px;
+        display: flex;
+        flex-flow: row;
+        align-items: baseline;
+        direction: ltr;
+        gap: 10px;
+        z-index: 10;
+
+        .eng {
+            .font-en;
+        }
+
+        .heb {
+            .font;
+        }
+
+        .eng, .heb {
+            cursor: pointer;
+            color: #828282;
+            text-decoration: none;
+            &:hover {
+                text-decoration: underline;
+            }
+            line-height: 24px;
+        }
+
+        &.lang-he {
+            .heb {
+                color: @blue;
+                pointer-events: none;
+            }
+        }
+
+        &.lang-en {
+            .eng {
+                color: @blue;
+                pointer-events: none;
+            }
+        }
+
+        .lang-separator {
+            background-image: url(../assets/img/lang-switch-separator.svg);
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 18px;
+            height: 27px;
+            position: relative;
+            top: 8px;
+        }
+    }
+
     .title {
         position: fixed;
         display: none;

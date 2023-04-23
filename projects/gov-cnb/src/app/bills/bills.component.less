@@ -65,32 +65,28 @@
                     flex-flow: column;
                     align-items: center;
                     justify-content: center;
+                    gap: 8px;
                     height: 100%;
                     width: 100%;
-                    &.lang-he {
-                        background-image: url(../../assets/img/bill-header.svg);
-                    }
-                    &.lang-en {
-                        background-image: url(../../assets/img/bill-header-en.svg);
-                    }
-                    background-size: 78px 63px;
+                    background-image: url(../../assets/img/bill-header.svg);
+                    background-size: 23px 29px;
                     background-repeat: no-repeat;
-                    background-position: center top 8px;
-                    padding-top: 70px;
+                    background-position: center top 30px;
+                    padding-top: 80px;
                     border-bottom: 2px solid @blue;
                     .mobile({
-                        background-size: 58px 47px;
-                        padding-top: 50px;
+                        background-position: center top 15px;
+                        padding-top: 55px;
                     });
 
                     .title, .subtitle {
                         width: 100%;
                         // .font;
                         font-size: 24px;
-                        line-height: 32px;
+                        line-height: 24px;
                         .mobile({
-                            font-size: 18px;
-                            line-height: 24px;
+                            font-size: 20px;
+                            line-height: 20px;
                         });
                         color: @blue;
                         font-weight: 700;
@@ -98,6 +94,12 @@
                     }
                     .subtitle {
                         font-weight: 400;
+                        font-size: 20px;
+                        line-height: 24px;
+                        .mobile({
+                            font-size: 16px;
+                            line-height: 20px;
+                        });
                     }
                 }
             }
