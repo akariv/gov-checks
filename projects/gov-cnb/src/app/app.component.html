@@ -14,7 +14,7 @@
       [class.intro-slide]='slide.slug === "introduction"'
       lrlr
     >
-    <div class='slide-text' [innerHtml]='slide.textHtml'></div>
+    <div class='slide-text' [innerHtml]='slide.textHtml' lrlr></div>
     <ng-container *ngIf='bills && (i === content.lawsSlideIndex || i === content.lawsSlideIndex2)'>
       <app-bills [currentSlide]='currentSlide' [bills]='bills' [targetSlide]='i'></app-bills>
     </ng-container>
