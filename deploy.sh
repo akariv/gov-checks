@@ -3,6 +3,7 @@ git checkout main && \
 (git branch -D dist || true) && \
 git checkout -b dist && \
 rm .gitignore && \
+cd projects/gov-cnb/src/assets/cache && ./fetch-cache.sh && cd - && \
 npm run build && \
 cp dist/gov-cnb/index.html dist/gov-cnb/404.html && \
 cp CNAME dist/gov-cnb/ || true && \
