@@ -68,7 +68,7 @@ export class AppComponent implements AfterViewInit {
 
   prepareShare() {
     const shareText = this.content.shareText;
-    let url = 'https://save-democracy.berl.org.il/';
+    let url = 'https://protect-democracy.berl.org.il/';
     if (environment.lang) {
       url += `${environment.lang}/`;
     }
